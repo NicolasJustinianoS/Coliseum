@@ -108,12 +108,10 @@ canvas{display:block;touch-action:none}
 #notification{position:absolute;bottom:5rem;left:50%;transform:translateX(-50%);font-size:1.4rem;color:var(--accent);opacity:0;transition:opacity 0.3s;text-align:center;text-shadow:0 0 10px rgba(0,0,0,0.8)}
 #notification.show{opacity:1}
 
-/* Controles Móviles (Derecha) */
-#mobile-controls{position:absolute;bottom:max(2rem, env(safe-area-inset-bottom));right:max(1.5rem, env(safe-area-inset-right));width:140px;height:65px;z-index:15;display:none;pointer-events:none}
+/* Controles Móviles */
+#mobile-controls{position:absolute;bottom:max(2rem, env(safe-area-inset-bottom));right:max(7rem, calc(env(safe-area-inset-right) + 5rem));width:65px;height:65px;z-index:15;display:none;pointer-events:none}
 .mobile-btn{position:absolute;width:65px;height:65px;border-radius:50%;background:rgba(8,12,20,0.8);border:2px solid var(--border);color:var(--accent);font-family:'Orbitron';font-size:0.65rem;font-weight:700;pointer-events:auto;cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.1;backdrop-filter:blur(4px);-webkit-tap-highlight-color: transparent}
 .mobile-btn:active{background:rgba(0,255,229,0.3);transform:scale(0.95)}
-#btn-sneak{bottom:0;left:0}
-#btn-stone{bottom:0;right:0}
 
 /* Botón de Pausa Minimalista (Izquierda) */
 #btn-pause{position:absolute;top:max(3.5rem, calc(env(safe-area-inset-top) + 2rem));left:max(5rem, calc(env(safe-area-inset-left) + 4rem));width:40px;height:40px;background:rgba(8,12,20,0.8);border:1px solid var(--border);border-radius:8px;display:none;z-index:11;cursor:pointer;pointer-events:auto;align-items:center;justify-content:center;gap:5px;-webkit-tap-highlight-color: transparent}
@@ -141,18 +139,17 @@ canvas{display:block;touch-action:none}
 @keyframes rotateAnim{0%,100%{transform:rotate(0deg)}50%{transform:rotate(90deg)}}
 @media screen and (orientation:portrait){ #rotate-overlay{display:flex} }
 
-/* BOTONES DESPLEGABLES MÓVILES (Bajados 3rem para evitar el Notch) */
+/* BOTONES DESPLEGABLES MÓVILES */
 .panel-toggle-btn{position:absolute;top:max(3.5rem, calc(env(safe-area-inset-top) + 2rem));background:rgba(8,12,20,0.8);border:1px solid var(--border);color:var(--accent);padding:0.4rem 0.8rem;font-family:'Orbitron';font-size:0.7rem;z-index:11;display:none;cursor:pointer;pointer-events:auto;-webkit-tap-highlight-color: transparent}
 #btn-toggle-missions{left:1rem}
 #btn-toggle-stats{right:1rem}
 @media (hover: none) and (pointer: coarse){ 
     .panel-toggle-btn{display:block} 
-    #missions-panel, #stats-panel { display: none; } /* Ocultos por defecto en móvil */
+    #missions-panel, #stats-panel { display: none; }
 }
 
 @media screen and (orientation:portrait){ .panel-toggle-btn{display:none !important} }
 
-/* RESPONSIVE PARA PANTALLAS HORIENTALES DE MÓVIL */
 @media screen and (orientation:landscape) and (max-height: 500px) {
     .title-block{margin-bottom:1.5rem}
     .title-block h1{font-size:3rem;margin-bottom:0}
@@ -166,7 +163,6 @@ canvas{display:block;touch-action:none}
 </head>
 <body>
 
-<!-- MENSAJE DE ROTAR TELÉFONO -->
 <div id="rotate-overlay">
     <div class="rotate-icon">📱</div>
     <h2>GIRA TU TELÉFONO</h2>
@@ -207,18 +203,15 @@ canvas{display:block;touch-action:none}
         <div class="instr-item"><span class="instr-key">Parado 1s</span><span class="instr-desc">Mantenete quieto sobre un panel o interruptor naranja para activarlo y abrir las rejas correspondientes.</span></div>
         <div class="instr-item"><span class="instr-key">R</span><span class="instr-desc">Reiniciar la sala actual. Útil si te encuentras atrapado o quieres intentar una estrategia distinta.</span></div>
         <div class="instr-item"><span class="instr-key">ESC</span><span class="instr-desc">Pausar la partida. Accede a las opciones de continuar, reiniciar o salir al menú principal.</span></div>
-        <div class="instr-item"><span class="instr-key">MÓVIL</span><span class="instr-desc">Joystick Izq: Mover. Joystick Der: Apuntar luz (Tap rápido para encender/apagar). Botones: Pausa, Sigilo y Lanzar Piedra.</span></div>
+        <div class="instr-item"><span class="instr-key">MÓVIL</span><span class="instr-desc">Joystick Izq: Mover. Joystick Der: Apuntar luz (Tap rápido para encender/apagar). Botón Estático Naranja: Apuntar y lanzar ladrillos.</span></div>
     </div>
 </div>
 
 <div id="game-screen" class="screen">
     <div id="game-canvas-wrapper"></div>
     <div id="hud">
-        
-        <!-- Botones de Pausa y Desplegables -->
         <button id="btn-toggle-missions" class="panel-toggle-btn" ontouchstart="event.stopPropagation(); UI.togglePanel('missions-panel');" onclick="event.stopPropagation(); UI.togglePanel('missions-panel');">☰ OBJ</button>
         <button id="btn-toggle-stats" class="panel-toggle-btn" ontouchstart="event.stopPropagation(); UI.togglePanel('stats-panel');" onclick="event.stopPropagation(); UI.togglePanel('stats-panel');">☰ STAT</button>
-        
         <button id="btn-pause" ontouchstart="event.preventDefault(); event.stopPropagation(); UI.togglePause();" onclick="event.stopPropagation(); UI.togglePause();">
             <div class="pause-bar"></div>
             <div class="pause-bar"></div>
@@ -250,10 +243,9 @@ canvas{display:block;touch-action:none}
         <div id="notification"></div>
     </div>
 
-    <!-- Botones de Acción Móviles (Inferior Derecha) -->
+    <!-- Solo queda el botón de Sigilo como HTML. El de Ladrillo ahora es un joystick en el canvas -->
     <div id="mobile-controls">
         <button class="mobile-btn" id="btn-sneak" ontouchstart="event.preventDefault(); event.stopPropagation(); UI.toggleSneak();" onclick="event.stopPropagation(); UI.toggleSneak();">SIGILO</button>
-        <button class="mobile-btn" id="btn-stone" ontouchstart="event.preventDefault(); event.stopPropagation(); UI.throwStoneButton();" onclick="event.stopPropagation(); UI.throwStoneButton();">PIEDRA</button>
     </div>
     
     <div id="pause-overlay" class="overlay">
@@ -284,1048 +276,189 @@ canvas{display:block;touch-action:none}
 //  ZONA DE IMÁGENES BASE64 (PARA EL FINAL)
 // ==================================================================
 const _1px_img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
-
 let COVER_IMAGE_64 = _1px_img;
 let LARA_PORTRAIT_64 = _1px_img;
 let CENTRAL_PORTRAIT_64 = _1px_img;
 let LEVEL_FLOOR_IMAGES_64 = [_1px_img, _1px_img, _1px_img, _1px_img, _1px_img, _1px_img];
-
 const PLAYER_SVG_64 = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImJvaW5hIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzNGOEE0NiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzFFNEQyNyIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJzb21icmEiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNkNCODc0Ii8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMTQzMzFCIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHBhdGggZD0iTTEwNSAxOTUgQzEyNSAxMDUgMjQ1IDY1IDM0MCA5NSBDNDMwIDEyMiA0NzAgMTg4IDQ0NSAyNTUgQzQyMCAzMjMgMzMwIDM0MiAyNTUgMzIzIEMxNzAgMzAyIDEwOCAyNjAgMTA1IDE5NSBaIiBmaWxsPSJ1cmwoI2JvaW5hKSIgc3Ryb2tlPSIjMTczNzFFIiBzdHJva2Utd2lkdGg9IjYiLz48cGF0aCBkPSJNMTgwIDE2MCBDMjQ1IDEzMCAzNDAgMTUwIDM3NSAyMTAgQzMyMCAxODggMjUwIDE5MCAxODAgMTYwIFoiIGZpbGw9InVybCgjc29tYnJhKSIgb3BhY2l0eT0iLjU1Ii8+PHBhdGggZD0iTTE0MCAyNTAgQzIwNSAyOTUgMzIwIDMwMCAzOTAgMjYwIEwzODUgMzE1IEMzMjAgMzUwIDIxMCAzNDggMTQ1IDMxMiBaIiBmaWxsPSIjMTkzOTFFIi8+PGNpcmNsZSBjeD0iMjY1IiBjeT0iMjg2IiByPSIzOCIgZmlsbD0iI0Q0QUYzNyIgc3Ryb2tlPSIjNzA1MDAwIiBzdHJva2Utd2lkdGg9IjQiLz48Y2xpcFBhdGggaWQ9ImNsaXBGbGFnIj48Y2lyY2xlIGN4PSIyNjUiIGN5PSIyODYiIHI9IjI4Ii8+PC9jbGlwUGF0aD48ZyBjbGlwLXBhdGg9InVybCgjY2xpcEZsYWcpIj48cmVjdCB4PSIyMzUiIHk9IjI1OCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjE4IiBmaWxsPSIjRDUyQjFFIi8+PHJlY3QgeD0iMjM1IiB5PSIyNzYiIHdpZHRoPSI2MCIgaGVpZ2h0PSIxOCIgZmlsbD0iI0ZGRDcwMCIvPjxyZWN0IHg9IjIzNSIgeT0iMjk0IiB3aWR0aD0iNjAiIGhlaWdodD0iMTgiIGZpbGw9IiMwMDdBMzMiLz48L2c+PGNpcmNsZSBjeD0iMjY1IiBjeT0iMjg2IiByPSIyOCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjIiLz48Y2lyY2xlIGN4PSIyNjUiIGN5PSIyODYiIHI9IjQiIGZpbGw9IiNGRkZFRkYiLz48L3N2Zz4=";
-
 let coverImg = null, laraImg = null, centralImg = null, floorImages = [];
 let playerImg; 
 // ==================================================================
 
-
-// ═══════════════════════════════════════════════════
-//  CONFIGURACIÓN P5.JS Y CÁMARA
-// ═══════════════════════════════════════════════════
-const CELL = 20;
-const COLS = 54;
-const ROWS = 36;
-const W = COLS * CELL;
-const H = ROWS * CELL;
-
-const MEMORY_FLOOR = 0.05;
-const LIGHT_RANGE = 120;
-const LIGHT_CONE = Math.PI / 3; 
-const HALF_ANGLE_DIM = Math.PI / 6; 
-const DIM_RANGE_FACTOR = 0.55; 
-const BASE_SPEED_WALK = 1.7;
-const BASE_SPEED_RUN = 3.0;
-const BASE_STONE_CAP = 1;
-const MAX_BATTERY = 20000; 
-const BATTERY_PICKUP_AMOUNT = 5000; 
+const CELL = 20, COLS = 54, ROWS = 36, W = COLS * CELL, H = ROWS * CELL;
+const MEMORY_FLOOR = 0.05, LIGHT_RANGE = 120, LIGHT_CONE = Math.PI / 3, HALF_ANGLE_DIM = Math.PI / 6, DIM_RANGE_FACTOR = 0.55;
+const BASE_SPEED_WALK = 1.7, BASE_SPEED_RUN = 3.0, BASE_STONE_CAP = 1, MAX_BATTERY = 20000, BATTERY_PICKUP_AMOUNT = 5000; 
 
 let upgrades = { extendedRadius: false, silentLight: false, directional: false };
 let playerStats = { lightChoices: 0, speedChoices: 0, stoneChoices: 0 };
-
 function currentLightRange() { return LIGHT_RANGE + playerStats.lightChoices * 30 + (upgrades.extendedRadius ? 40 : 0); }
 function currentWalkSpeed() { return BASE_SPEED_WALK + playerStats.speedChoices * 0.3; }
 function currentRunSpeed() { return BASE_SPEED_RUN + playerStats.speedChoices * 0.5; }
 function currentStoneCap() { return BASE_STONE_CAP + playerStats.stoneChoices; }
 
-let levelIndex = 0;
-let brightness, seenEver, lastFullTime;
-let walls = [];
-let doorWalls = []; 
-let switchObj = null;
-let pickup = null;
-let exitZone = null;
-let enemies = [];
-let stones = [];
-let noiseEvents = [];
-let cameras = [];
-let deathsThisLevel = 0;
-
+let levelIndex = 0, brightness, seenEver, lastFullTime;
+let walls = [], doorWalls = [], switchObj = null, pickup = null, exitZone = null, enemies = [], stones = [], noiseEvents = [], cameras = [], deathsThisLevel = 0;
 let player = { x: 0, y: 0, r: 6, aimAngle: 0 };
-let flashlightOn = false;
-let dimMode = false; 
-let battery = MAX_BATTERY;
-let lightsOn = false;
-let currentFloorImg = null; 
-
-let audioReady = false;
-let audioCtx = null;
-let paused = false;
-let sneakMode = false;
-
-let levelStartTime = 0;
-let currentTime = 0;
-let bestTime = 0;
-let lastTimes = []; 
+let flashlightOn = false, dimMode = false, battery = MAX_BATTERY, lightsOn = false, currentFloorImg = null; 
+let audioReady = false, audioCtx = null, paused = false, sneakMode = false;
+let levelStartTime = 0, currentTime = 0, bestTime = 0, lastTimes = []; 
 let levelCompleted = false; 
 
 // Controles táctiles
-let touchMoveId = null; 
-let moveStartX = 0, moveStartY = 0;
-let moveCurrentX = 0, moveCurrentY = 0;
-
-let touchAimId = null; 
-let aimTouchStart = 0;
-let aimStartX = 0, aimStartY = 0;
-let aimCurrentX = 0, aimCurrentY = 0;
+let touchMoveId = null, moveStartX = 0, moveStartY = 0, moveCurrentX = 0, moveCurrentY = 0;
+let touchAimId = null, aimTouchStart = 0, aimStartX = 0, aimStartY = 0, aimCurrentX = 0, aimCurrentY = 0;
+let touchThrowId = null, throwBaseX = 0, throwBaseY = 0, throwKnobX = 0, throwKnobY = 0;
 
 // VARIABLES DE CÁMARA
-let camX = 0, camY = 0;
-let gameMouseX = 0, gameMouseY = 0;
+let camX = 0, camY = 0, gameMouseX = 0, gameMouseY = 0;
 
-// ============================================================
-// MAPAS
-// ============================================================
-function customMaze0() {
-  let ws = serpentineWalls(4, 200, 16);
-  ws.push({ x: 900, y: 540, w: 16, h: 60 }); 
-  ws.push({ x: 900, y: 660, w: 16, h: 60 }); 
-  return ws;
-}
-function customMaze1() {
-  let ws = [];
-  ws.push({ x: 200, y: 16, w: 16, h: 104 });  ws.push({ x: 400, y: 120, w: 16, h: 112 }); 
-  ws.push({ x: 600, y: 16, w: 16, h: 104 });  ws.push({ x: 800, y: 120, w: 16, h: 112 }); 
-  ws.push({ x: 0, y: 232, w: 880, h: 16 });   ws.push({ x: 800, y: 248, w: 16, h: 112 }); 
-  ws.push({ x: 600, y: 360, w: 16, h: 112 }); ws.push({ x: 400, y: 248, w: 16, h: 112 }); 
-  ws.push({ x: 200, y: 360, w: 16, h: 112 }); ws.push({ x: 200, y: 472, w: 880, h: 16 }); 
-  ws.push({ x: 200, y: 488, w: 16, h: 112 }); ws.push({ x: 400, y: 600, w: 16, h: 112 }); 
-  ws.push({ x: 600, y: 488, w: 16, h: 112 }); ws.push({ x: 800, y: 600, w: 16, h: 112 }); 
-  return ws;
-}
-function customMaze2() {
-  let ws = [];
-  ws.push({ x: 16, y: 342, w: 164, h: 16 }); ws.push({ x: 280, y: 342, w: 784, h: 16 });
-  ws.push({ x: 492, y: 16, w: 16, h: 164 }); ws.push({ x: 492, y: 342, w: 16, h: 8 });
-  ws.push({ x: 492, y: 358, w: 16, h: 222 });
-  ws.push({ x: 200, y: 100, w: 60, h: 100 }); ws.push({ x: 300, y: 200, w: 100, h: 60 });
-  ws.push({ x: 700, y: 100, w: 60, h: 100 }); ws.push({ x: 800, y: 200, w: 100, h: 60 });
-  ws.push({ x: 200, y: 500, w: 60, h: 100 }); ws.push({ x: 300, y: 450, w: 100, h: 60 });
-  ws.push({ x: 700, y: 500, w: 60, h: 100 }); ws.push({ x: 800, y: 450, w: 100, h: 60 });
-  return ws;
-}
-function customMaze3() {
-  let ws = [];
-  const rawMap = [
-    "########################", "#S....#.......#.........", "#.###.#.#...#.#.####.###",
-    "#.#...#.#...#.#..#.....#", "#.#.###.#.#.#.#.#.###.#.", "#.#......#.#.#...#.#.#..",
-    "#.#####.#.#.#####.#.###.", "#.....#.#.....W.....#.#.", "#####.#.#.#####.#.###.#.",
-    "#.....#.#.....#.#...#.#.", "#.#####.#####.#.###.#.#.", "#.....#.....#.#...#.#.#.",
-    "#####.#####.#.###.#.#.#.", "#...#.....#.#...#.#.#.#.", "#.#.#####.#.###.#.#.###.",
-    "#.#.....#.#.....#.#.....", "#.#####.#.#######.###...", "#...................#..."
-  ];
-  const cellSize = 40; 
-  for(let y=0; y<rawMap.length; y++) {
-    const row = rawMap[y].padEnd(27, '#'); 
-    for(let x=0; x<27; x++) {
-      if(row[x] === '#') ws.push({ x: x*cellSize, y: y*cellSize, w: cellSize, h: cellSize });
-    }
-  }
-  return ws;
-}
-function customMaze4() {
-  let ws = [];
-  const rawMap = [
-    "########################", 
-    "#S...........#.........#", 
-    "###.#######.#.#######.##",
-    "#...#.....#.#.#.....#..#", 
-    "#.###.###.#.#.#.###.##.#", 
-    "#.#...#.#.#.#.#.#.#..#.#",
-    "#.#.###.#.#.#.#.#.##.#.#", 
-    "#.#...#...#...#...#..#.#", 
-    "#.###.#######.#######.##",
-    "#...........W..........#", 
-    "##.#######.#######..##.#", 
-    "#.#.....#.#.#.....#...#.",
-    "#.###.#.#.#.#.#.###.###.", 
-    "#.#.#.#.#.#.#.#.#.....#.", 
-    "#.#.#.###.#.#.###......", 
-    "#.#.#.....#.#.....#.....", 
-    "#.#.#######.#######....#", 
-    "#...................D..E#"  
-  ];
-  const cellSize = 40; 
-  for(let y=0; y<rawMap.length; y++) {
-    const row = rawMap[y].padEnd(27, '#'); 
-    for(let x=0; x<27; x++) {
-      if(row[x] === '#') ws.push({ x: x*cellSize, y: y*cellSize, w: cellSize, h: cellSize });
-    }
-  }
-  return ws;
-}
-function customMaze5() {
-  let ws = [];
-  const rawMap = [
-    "########################", "#S....#.......#........#", "#####.#.#####.#.######.#",
-    "#.....#.....#.#........#", "#.###########.#.########", "#.#.........#.#........#",
-    "#.#.#######.#.########.#", "#.#.#.....#.#........#.#", "#.#.#.###.#.########.#.#",
-    "#.#.#.#.#.#.......W....#", "#.#.#.#.#.############.#", "#.#.#.#.#..............#",
-    "#.#.#.#.################", "#.#.#.#................#", "#.#.#.################.#",
-    "#.#.#..................#", "#.#.##################.#", "#..................D..E#"  
-  ];
-  const cellSize = 40; 
-  for(let y=0; y<rawMap.length; y++) {
-    const row = rawMap[y].padEnd(27, '#'); 
-    for(let x=0; x<27; x++) {
-      if(row[x] === '#') ws.push({ x: x*cellSize, y: y*cellSize, w: cellSize, h: cellSize });
-    }
-  }
-  return ws;
-}
-function serpentineWalls(lanes, gapSize, thickness) {
-  const laneH = H / lanes; let ws = [];
-  for (let i = 1; i < lanes; i++) {
-    const y = i * laneH; const gapOnLeft = (i % 2 === 1);
-    if (gapOnLeft) { ws.push({ x: gapSize, y: y - thickness/2, w: W - gapSize, h: thickness }); } 
-    else { ws.push({ x: 0, y: y - thickness/2, w: W - gapSize, h: thickness }); }
-  }
-  return ws;
-}
+function customMaze0() { let ws = serpentineWalls(4, 200, 16); ws.push({ x: 900, y: 540, w: 16, h: 60 }); ws.push({ x: 900, y: 660, w: 16, h: 60 }); return ws; }
+function customMaze1() { let ws = []; ws.push({ x: 200, y: 16, w: 16, h: 104 }); ws.push({ x: 400, y: 120, w: 16, h: 112 }); ws.push({ x: 600, y: 16, w: 16, h: 104 }); ws.push({ x: 800, y: 120, w: 16, h: 112 }); ws.push({ x: 0, y: 232, w: 880, h: 16 }); ws.push({ x: 800, y: 248, w: 16, h: 112 }); ws.push({ x: 600, y: 360, w: 16, h: 112 }); ws.push({ x: 400, y: 248, w: 16, h: 112 }); ws.push({ x: 200, y: 360, w: 16, h: 112 }); ws.push({ x: 200, y: 472, w: 880, h: 16 }); ws.push({ x: 200, y: 488, w: 16, h: 112 }); ws.push({ x: 400, y: 600, w: 16, h: 112 }); ws.push({ x: 600, y: 488, w: 16, h: 112 }); ws.push({ x: 800, y: 600, w: 16, h: 112 }); return ws; }
+function customMaze2() { let ws = []; ws.push({ x: 16, y: 342, w: 164, h: 16 }); ws.push({ x: 280, y: 342, w: 784, h: 16 }); ws.push({ x: 492, y: 16, w: 16, h: 164 }); ws.push({ x: 492, y: 342, w: 16, h: 8 }); ws.push({ x: 492, y: 358, w: 16, h: 222 }); ws.push({ x: 200, y: 100, w: 60, h: 100 }); ws.push({ x: 300, y: 200, w: 100, h: 60 }); ws.push({ x: 700, y: 100, w: 60, h: 100 }); ws.push({ x: 800, y: 200, w: 100, h: 60 }); ws.push({ x: 200, y: 500, w: 60, h: 100 }); ws.push({ x: 300, y: 450, w: 100, h: 60 }); ws.push({ x: 700, y: 500, w: 60, h: 100 }); ws.push({ x: 800, y: 450, w: 100, h: 60 }); return ws; }
+function customMaze3() { let ws = []; const rawMap = ["########################", "#S....#.......#.........", "#.###.#.#...#.#.####.###", "#.#...#.#...#.#..#.....#", "#.#.###.#.#.#.#.#.###.#.", "#.#......#.#.#...#.#.#..", "#.#####.#.#.#####.#.###.", "#.....#.#.....W.....#.#.", "#####.#.#.#####.#.###.#.", "#.....#.#.....#.#...#.#.", "#.#####.#####.#.###.#.#.", "#.....#.....#.#...#.#.#.", "#####.#####.#.###.#.#.#.", "#...#.....#.#...#.#.#.#.", "#.#.#####.#.###.#.#.###.", "#.#.....#.#.....#.#.....", "#.#####.#.#######.###...", "#...................#..."]; const cellSize = 40; for(let y=0; y<rawMap.length; y++) { const row = rawMap[y].padEnd(27, '#'); for(let x=0; x<27; x++) { if(row[x] === '#') ws.push({ x: x*cellSize, y: y*cellSize, w: cellSize, h: cellSize }); } } return ws; }
+function customMaze4() { let ws = []; const rawMap = ["########################", "#S...........#.........#", "###.#######.#.#######.##", "#...#.....#.#.#.....#..#", "#.###.###.#.#.#.###.##.#", "#.#...#.#.#.#.#.#.#..#.#", "#.#.###.#.#.#.#.#.##.#.#", "#.#...#...#...#...#..#.#", "#.###.#######.#######.##", "#...........W..........#", "##.#######.#######..##.#", "#.#.....#.#.#.....#...#.", "#.###.#.#.#.#.#.###.###.", "#.#.#.#.#.#.#.#.#.....#.", "#.#.#.###.#.#.###......", "#.#.#.....#.#.....#.....", "#.#.#######.#######....#", "#...................D..E#"]; const cellSize = 40; for(let y=0; y<rawMap.length; y++) { const row = rawMap[y].padEnd(27, '#'); for(let x=0; x<27; x++) { if(row[x] === '#') ws.push({ x: x*cellSize, y: y*cellSize, w: cellSize, h: cellSize }); } } return ws; }
+function customMaze5() { let ws = []; const rawMap = ["########################", "#S....#.......#........#", "#####.#.#####.#.######.#", "#.....#.....#.#........#", "#.###########.#.########", "#.#.........#.#........#", "#.#.#######.#.########.#", "#.#.#.....#.#........#.#", "#.#.#.###.#.########.#.#", "#.#.#.#.#.#.......W....#", "#.#.#.#.#.############.#", "#.#.#.#.#..............#", "#.#.#.#.################", "#.#.#.#................#", "#.#.#.################.#", "#.#.#..................#", "#.#.##################.#", "#..................D..E#"]; const cellSize = 40; for(let y=0; y<rawMap.length; y++) { const row = rawMap[y].padEnd(27, '#'); for(let x=0; x<27; x++) { if(row[x] === '#') ws.push({ x: x*cellSize, y: y*cellSize, w: cellSize, h: cellSize }); } } return ws; }
+function serpentineWalls(lanes, gapSize, thickness) { const laneH = H / lanes; let ws = []; for (let i = 1; i < lanes; i++) { const y = i * laneH; const gapOnLeft = (i % 2 === 1); if (gapOnLeft) { ws.push({ x: gapSize, y: y - thickness/2, w: W - gapSize, h: thickness }); } else { ws.push({ x: 0, y: y - thickness/2, w: W - gapSize, h: thickness }); } } return ws; }
 
 const LEVELS = [
-  {
-    name: "Nivel 0 — Tutorial", diff: "Tutorial", diffClass: "diff-easy",
-    central: ["CENTRAL: Edman, este es el vestíbulo. Tenemos luces de emergencia.", "CENTRAL: Ve a la esquina inferior derecha y activa el panel para abrir la puerta.", "CENTRAL: Al abrir la puerta, habrá un cortocircuito. Usa tu linterna (ESPACIO) para encontrar la salida."],
-    buildWalls() { return customMaze0(); }, 
-    lightsOnAtStart: true, pickup: null, enemies: [],
-    switchPuzzle: { x: 800, y: 640, r: 12, doors: [{ x: 900, y: 600, w: 16, h: 60 }] },
-    exitZone: { x: 1000, y: 620, w: 40, h: 40 }, playerStart: { x: 50, y: 90 }, batteryPickups: []
-  },
-  {
-    name: "Nivel 1 — Primer Vistazo", diff: "Fácil", diffClass: "diff-easy",
-    central: ["CENTRAL: El cortecircuito afectó todo. No tenemos cámaras.", "CENTRAL: Tu linterna tiene 20s de batería. Encuéntrate pilas en el mapa.", "CENTRAL: Avanza con cuidado, hay viciosos rondando."],
-    buildWalls() { return customMaze1(); }, lightsOnAtStart: true, pickup: null,
-    enemies: [
-      { x: 400, y: 70, waypoints: [{x:250, y:70}, {x:550, y:70}], type: "vigia" },
-      { x: 300, y: 410, waypoints: [{x:250, y:410}, {x:550, y:410}], type: "vigia" },
-      { x: 500, y: 650, waypoints: [{x:450, y:650}, {x:750, y:650}], type: "vigia" }
-    ],
-    cameras: [
-      { x: 100, y: 16, baseAngle: Math.PI/2, sweepRange: Math.PI/3, speed: 0.001, range: 180, fov: Math.PI/6 },
-      { x: 900, y: 700, baseAngle: -Math.PI/2, sweepRange: Math.PI/4, speed: 0.0015, range: 150, fov: Math.PI/6 }
-    ],
-    switchPuzzle: null, exitZone: { x: 990, y: 630, w: 40, h: 40 }, playerStart: { x: 50, y: 60 },
-    batteryPickups: [{x: 300, y: 100, r: 8}, {x: 900, y: 650, r: 8}]
-  },
-  {
-    name: "Nivel 2 — Vigías", diff: "Medio", diffClass: "diff-medium",
-    central: ["CENTRAL: Estás en el salón principal. La salida está bloqueada por una reja.", "EDMAN: Veo un panel de control al fondo, pero está lejos.", "CENTRAL: Actívalo para abrir paso. Cuidado, si ven la luz irán directo por ti."],
-    buildWalls() { return customMaze2(); }, lightsOnAtStart: true, 
-    pickup: { x: 100, y: 660, r: 8, label: "Linterna de largo alcance", upgradeKey: "extendedRadius" },
-    enemies: [
-      { x: 500, y: 250, type: "vigia", waypoints: [{x:250, y:250}, {x:750, y:250}] },
-      { x: 100, y: 400, type: "maton", waypoints: [{x:100, y:400}, {x:100, y:680}] }
-    ],
-    switchPuzzle: { x: 900, y: 100, r: 12, doors: [{ x: 492, y: 580, w: 16, h: 124 }] },
-    exitZone: { x: 980, y: 620, w: 40, h: 40 }, playerStart: { x: 100, y: 100 },
-    batteryPickups: [{x: 900, y: 660, r: 8}, {x: 300, y: 250, r: 8}]
-  },
-  {
-    name: "Nivel 3 — La Bodega", diff: "Difícil", diffClass: "diff-hard",
-    central: ["CENTRAL: Este sector es un enredo de pasillos. Los matones te están buscando.", "CENTRAL: Hay un interruptor escondido en el centro. Ábrelo para desbloquear las puertas."],
-    buildWalls() { return customMaze3(); }, lightsOnAtStart: true, 
-    pickup: { x: 540, y: 140, r: 8, label: "Linterna atenuada", upgradeKey: "silentLight" },
-    enemies: [
-      { x: 800, y: 60, type: "maton", waypoints: [{x:680, y:60}, {x:1000, y:60}] },
-      { x: 380, y: 140, type: "maton", waypoints: [{x:380, y:60}, {x:380, y:140}] },
-      { x: 60, y: 220, type: "maton", waypoints: [{x:60, y:140}, {x:60, y:300}] },
-      { x: 220, y: 620, type: "vigia", waypoints: [{x:140, y:620}, {x:300, y:620}] }
-    ],
-    switchPuzzle: { x: 560, y: 300, r: 10, doors: [ { x: 320, y: 680, w: 40, h: 40 }, { x: 360, y: 160, w: 40, h: 40 } ] },
-    exitZone: { x: 840, y: 640, w: 40, h: 40 }, playerStart: { x: 60, y: 60 }, batteryPickups: [{x: 140, y: 620, r: 8}]
-  },
-  {
-    name: "Nivel 4 — Subterráneo", diff: "Extremo", diffClass: "diff-hard",
-    central: ["CENTRAL: Estás en los subterráneos. El cabecilla te está buscando.", "CENTRAL: No te quedes quieto, te cornerán. Encuentra el panel central para abrir la reja de salida."],
-    buildWalls() { return customMaze4(); }, lightsOnAtStart: true, 
-    pickup: { x: 540, y: 140, r: 8, label: "Radio direccional", upgradeKey: "directional" },
-    enemies: [
-      { x: 100, y: 140, type: "maton", waypoints: [{x:60, y:140}, {x:140, y:140}] },
-      { x: 620, y: 380, type: "maton", waypoints: [{x:580, y:380}, {x:740, y:380}] },
-      { x: 820, y: 540, type: "cabecilla", waypoints: [{x:780, y:540}, {x:900, y:540}] }
-    ],
-    switchPuzzle: { x: 480, y: 380, r: 10, doors: [ { x: 760, y: 680, w: 40, h: 40 } ] },
-    exitZone: { x: 880, y: 680, w: 40, h: 40 }, playerStart: { x: 60, y: 60 }, batteryPickups: [{x: 540, y: 140, r: 8}, {x: 540, y: 540, r: 8}]
-  },
-  {
-    name: "Nivel 5 — Escape Final", diff: "Pesadilla", diffClass: "diff-hard",
-    central: ["CENTRAL: La salida está ahí arriba. ¡Ve por ella!", "CENTRAL: Corre, Edman, corren."],
-    buildWalls() { return customMaze5(); }, lightsOnAtStart: true, pickup: null,
-    enemies: [
-      { x: 220, y: 220, waypoints: [{x:220, y:220}, {x:220, y:380}], type: "cabecilla" },
-      { x: 620, y: 620, waypoints: [{x:620, y:620}, {x:780, y:620}], type: "cabecilla" },
-      { x: 820, y: 300, waypoints: [{x:820, y:300}, {x:940, y:300}], type: "cabecilla" }
-    ],
-    switchPuzzle: { x: 780, y: 380, r: 10, doors: [ { x: 760, y: 680, w: 40, h: 40 } ] },
-    exitZone: { x: 880, y: 680, w: 40, h: 40 }, playerStart: { x: 60, y: 60 }, batteryPickups: [{x: 540, y: 140, r: 8}, {x: 540, y: 540, r: 8}], isFinal: true
-  }
+  { name: "Nivel 0 — Tutorial", diff: "Tutorial", diffClass: "diff-easy", central: ["CENTRAL: Edman, este es el vestíbulo. Tenemos luces de emergencia.", "CENTRAL: Ve a la esquina inferior derecha y activa el panel para abrir la puerta.", "CENTRAL: Al abrir la puerta, habrá un cortocircuito. Usa tu linterna (ESPACIO) para encontrar la salida."], buildWalls() { return customMaze0(); }, lightsOnAtStart: true, pickup: null, enemies: [], switchPuzzle: { x: 800, y: 640, r: 12, doors: [{ x: 900, y: 600, w: 16, h: 60 }] }, exitZone: { x: 1000, y: 620, w: 40, h: 40 }, playerStart: { x: 50, y: 90 }, batteryPickups: [] },
+  { name: "Nivel 1 — Primer Vistazo", diff: "Fácil", diffClass: "diff-easy", central: ["CENTRAL: El cortecircuito afectó todo. No tenemos cámaras.", "CENTRAL: Tu linterna tiene 20s de batería. Encuéntrate pilas en el mapa.", "CENTRAL: Avanza con cuidado, hay viciosos rondando."], buildWalls() { return customMaze1(); }, lightsOnAtStart: true, pickup: null, enemies: [ { x: 400, y: 70, waypoints: [{x:250, y:70}, {x:550, y:70}], type: "vigia" }, { x: 300, y: 410, waypoints: [{x:250, y:410}, {x:550, y:410}], type: "vigia" }, { x: 500, y: 650, waypoints: [{x:450, y:650}, {x:750, y:650}], type: "vigia" } ], cameras: [ { x: 100, y: 16, baseAngle: Math.PI/2, sweepRange: Math.PI/3, speed: 0.001, range: 180, fov: Math.PI/6 }, { x: 900, y: 700, baseAngle: -Math.PI/2, sweepRange: Math.PI/4, speed: 0.0015, range: 150, fov: Math.PI/6 } ], switchPuzzle: null, exitZone: { x: 990, y: 630, w: 40, h: 40 }, playerStart: { x: 50, y: 60 }, batteryPickups: [{x: 300, y: 100, r: 8}, {x: 900, y: 650, r: 8}] },
+  { name: "Nivel 2 — Vigías", diff: "Medio", diffClass: "diff-medium", central: ["CENTRAL: Estás en el salón principal. La salida está bloqueada por una reja.", "EDMAN: Veo un panel de control al fondo, pero está lejos.", "CENTRAL: Actívalo para abrir paso. Cuidado, si ven la luz irán directo por ti."], buildWalls() { return customMaze2(); }, lightsOnAtStart: true, pickup: { x: 100, y: 660, r: 8, label: "Linterna de largo alcance", upgradeKey: "extendedRadius" }, enemies: [ { x: 500, y: 250, type: "vigia", waypoints: [{x:250, y:250}, {x:750, y:250}] }, { x: 100, y: 400, type: "maton", waypoints: [{x:100, y:400}, {x:100, y:680}] } ], switchPuzzle: { x: 900, y: 100, r: 12, doors: [{ x: 492, y: 580, w: 16, h: 124 }] }, exitZone: { x: 980, y: 620, w: 40, h: 40 }, playerStart: { x: 100, y: 100 }, batteryPickups: [{x: 900, y: 660, r: 8}, {x: 300, y: 250, r: 8}] },
+  { name: "Nivel 3 — La Bodega", diff: "Difícil", diffClass: "diff-hard", central: ["CENTRAL: Este sector es un enredo de pasillos. Los matones te están buscando.", "CENTRAL: Hay un interruptor escondido en el centro. Ábrelo para desbloquear las puertas."], buildWalls() { return customMaze3(); }, lightsOnAtStart: true, pickup: { x: 540, y: 140, r: 8, label: "Linterna atenuada", upgradeKey: "silentLight" }, enemies: [ { x: 800, y: 60, type: "maton", waypoints: [{x:680, y:60}, {x:1000, y:60}] }, { x: 380, y: 140, type: "maton", waypoints: [{x:380, y:60}, {x:380, y:140}] }, { x: 60, y: 220, type: "maton", waypoints: [{x:60, y:140}, {x:60, y:300}] }, { x: 220, y: 620, type: "vigia", waypoints: [{x:140, y:620}, {x:300, y:620}] } ], switchPuzzle: { x: 560, y: 300, r: 10, doors: [ { x: 320, y: 680, w: 40, h: 40 }, { x: 360, y: 160, w: 40, h: 40 } ] }, exitZone: { x: 840, y: 640, w: 40, h: 40 }, playerStart: { x: 60, y: 60 }, batteryPickups: [{x: 140, y: 620, r: 8}] },
+  { name: "Nivel 4 — Subterráneo", diff: "Extremo", diffClass: "diff-hard", central: ["CENTRAL: Estás en los subterráneos. El cabecilla te está buscando.", "CENTRAL: No te quedes quieto, te cornerán. Encuentra el panel central para abrir la reja de salida."], buildWalls() { return customMaze4(); }, lightsOnAtStart: true, pickup: { x: 540, y: 140, r: 8, label: "Radio direccional", upgradeKey: "directional" }, enemies: [ { x: 100, y: 140, type: "maton", waypoints: [{x:60, y:140}, {x:140, y:140}] }, { x: 620, y: 380, type: "maton", waypoints: [{x:580, y:380}, {x:740, y:380}] }, { x: 820, y: 540, type: "cabecilla", waypoints: [{x:780, y:540}, {x:900, y:540}] } ], switchPuzzle: { x: 480, y: 380, r: 10, doors: [ { x: 760, y: 680, w: 40, h: 40 } ] }, exitZone: { x: 880, y: 680, w: 40, h: 40 }, playerStart: { x: 60, y: 60 }, batteryPickups: [{x: 540, y: 140, r: 8}, {x: 540, y: 540, r: 8}] },
+  { name: "Nivel 5 — Escape Final", diff: "Pesadilla", diffClass: "diff-hard", central: ["CENTRAL: La salida está ahí arriba. ¡Ve por ella!", "CENTRAL: Corre, Edman, corren."], buildWalls() { return customMaze5(); }, lightsOnAtStart: true, pickup: null, enemies: [ { x: 220, y: 220, waypoints: [{x:220, y:220}, {x:220, y:380}], type: "cabecilla" }, { x: 620, y: 620, waypoints: [{x:620, y:620}, {x:780, y:620}], type: "cabecilla" }, { x: 820, y: 300, waypoints: [{x:820, y:300}, {x:940, y:300}], type: "cabecilla" } ], switchPuzzle: { x: 780, y: 380, r: 10, doors: [ { x: 760, y: 680, w: 40, h: 40 } ] }, exitZone: { x: 880, y: 680, w: 40, h: 40 }, playerStart: { x: 60, y: 60 }, batteryPickups: [{x: 540, y: 140, r: 8}, {x: 540, y: 540, r: 8}], isFinal: true }
 ];
 
-const ENEMY_TYPES = {
-  vigia:     { speed: 0.6, sensitivity: 0.8, alertMult: 1.2, searchTime: 2800, color: [255, 170, 0] },
-  maton:     { speed: 0.85, sensitivity: 1.4, alertMult: 1.3, searchTime: 3800, color: [255, 85, 200] },
-  cabecilla: { speed: 1.3, sensitivity: 1.2, alertMult: 1.4, searchTime: 5200, color: [255, 51, 85] },
-};
+const ENEMY_TYPES = { vigia: { speed: 0.6, sensitivity: 0.8, alertMult: 1.2, searchTime: 2800, color: [255, 170, 0] }, maton: { speed: 0.85, sensitivity: 1.4, alertMult: 1.3, searchTime: 3800, color: [255, 85, 200] }, cabecilla: { speed: 1.3, sensitivity: 1.2, alertMult: 1.4, searchTime: 5200, color: [255, 51, 85] } };
 
 const UI = {
-    showScreen(id){
-        document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-    },
-    startGame(levelIdx){
-        ensureAudio();
-        upgrades = { extendedRadius:false, silentLight:false, directional:false };
-        playerStats = { lightChoices:0, speedChoices:0, stoneChoices:0 };
-        loadLevel(levelIdx);
-    },
-    nextLevel() {
-        document.getElementById('level-complete-overlay').classList.remove('active');
-        if (levelIndex >= LEVELS.length - 1) {
-            audioReady = false; noLoop(); this.showScreen('menu-screen');
-        } else {
-            this.startGame(levelIndex + 1);
-        }
-    },
-    prevLevel() {
-        document.getElementById('level-complete-overlay').classList.remove('active');
-        if (levelIndex > 0) {
-            this.startGame(levelIndex - 1);
-        }
-    },
-    restartLevel() {
-        document.getElementById('level-complete-overlay').classList.remove('active');
-        document.getElementById('pause-overlay').classList.remove('active');
-        paused = false; resetRoom(false);
-        loop();
-    },
-    quitToMenu() {
-        document.getElementById('level-complete-overlay').classList.remove('active');
-        document.getElementById('pause-overlay').classList.remove('active');
-        paused = false; audioReady = false; noLoop(); this.showScreen('menu-screen');
-    },
-    togglePause() {
-        if (!audioReady) return;
-        paused = !paused;
-        document.getElementById('pause-overlay').classList.toggle('active', paused);
-        if (paused) noLoop(); else loop();
-    },
-    toggleLight() {
-        if (paused || levelCompleted) return;
-        if (battery > 0) {
-            flashlightOn = !flashlightOn;
-            if (!flashlightOn) dimMode = false;
-            playSound(flashlightOn ? 800 : 400, 0.05, 'square', 0.1);
-        } else {
-            flashlightOn = false;
-            showMsg("BATERÍA AGOTADA", "var(--danger)");
-        }
-    },
-    toggleSneak() {
-        if (paused || levelCompleted) return;
-        sneakMode = !sneakMode;
-        showMsg(sneakMode ? "SIGILO ACTIVADO" : "SIGILO DESACTIVADO", "var(--success)");
-    },
-    throwStoneButton() {
-        if (paused || levelCompleted) return;
-        let throwX = player.x + cos(player.aimAngle) * 100;
-        let throwY = player.y + sin(player.aimAngle) * 100;
-        throwStone(throwX, throwY);
-    },
-    togglePanel(id) {
-        const panel = document.getElementById(id);
-        panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
-    },
-    initLevelSelect(){
-        const c=document.getElementById('level-cards'); c.innerHTML='';
-        LEVELS.forEach((lvl,i)=>{
-            const card=document.createElement('div'); card.className='level-card';
-            card.innerHTML=`<div class="lvl-num">${i}</div><div class="lvl-name">${lvl.name.split('—')[1]}</div><div class="lvl-desc">${lvl.central[0]}</div>`;
-            card.onclick=()=>{ ensureAudio(); this.startGame(i); };
-            c.appendChild(card);
-        });
-    }
+    showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); },
+    startGame(levelIdx){ ensureAudio(); upgrades = { extendedRadius:false, silentLight:false, directional:false }; playerStats = { lightChoices:0, speedChoices:0, stoneChoices:0 }; loadLevel(levelIdx); },
+    nextLevel() { document.getElementById('level-complete-overlay').classList.remove('active'); if (levelIndex >= LEVELS.length - 1) { audioReady = false; noLoop(); this.showScreen('menu-screen'); } else { this.startGame(levelIndex + 1); } },
+    prevLevel() { document.getElementById('level-complete-overlay').classList.remove('active'); if (levelIndex > 0) { this.startGame(levelIndex - 1); } },
+    restartLevel() { document.getElementById('level-complete-overlay').classList.remove('active'); document.getElementById('pause-overlay').classList.remove('active'); paused = false; resetRoom(false); loop(); },
+    quitToMenu() { document.getElementById('level-complete-overlay').classList.remove('active'); document.getElementById('pause-overlay').classList.remove('active'); paused = false; audioReady = false; noLoop(); this.showScreen('menu-screen'); },
+    togglePause() { if (!audioReady) return; paused = !paused; document.getElementById('pause-overlay').classList.toggle('active', paused); if (paused) noLoop(); else loop(); },
+    toggleLight() { if (paused || levelCompleted) return; if (battery > 0) { flashlightOn = !flashlightOn; if (!flashlightOn) dimMode = false; playSound(flashlightOn ? 800 : 400, 0.05, 'square', 0.1); } else { flashlightOn = false; showMsg("BATERÍA AGOTADA", "var(--danger)"); } },
+    toggleSneak() { if (paused || levelCompleted) return; sneakMode = !sneakMode; showMsg(sneakMode ? "SIGILO ACTIVADO" : "SIGILO DESACTIVADO", "var(--success)"); },
+    togglePanel(id) { const panel = document.getElementById(id); panel.style.display = (panel.style.display === 'block') ? 'none' : 'block'; },
+    initLevelSelect(){ const c=document.getElementById('level-cards'); c.innerHTML=''; LEVELS.forEach((lvl,i)=>{ const card=document.createElement('div'); card.className='level-card'; card.innerHTML=`<div class="lvl-num">${i}</div><div class="lvl-name">${lvl.name.split('—')[1]}</div><div class="lvl-desc">${lvl.central[0]}</div>`; card.onclick=()=>{ ensureAudio(); this.startGame(i); }; c.appendChild(card); }); }
 };
 
-function preload() {
-  playerImg = loadImage(PLAYER_SVG_64);
-}
-
-function setup() {
-  const c = createCanvas(windowWidth, windowHeight);
-  c.parent('game-canvas-wrapper');
-  pixelDensity(1);
-  brightness = new Float32Array(COLS * ROWS);
-  seenEver = new Uint8Array(COLS * ROWS);
-  lastFullTime = new Float32Array(COLS * ROWS);
-  UI.initLevelSelect();
-  noLoop();
-}
-
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
-}
+function preload() { playerImg = loadImage(PLAYER_SVG_64); }
+function setup() { const c = createCanvas(windowWidth, windowHeight); c.parent('game-canvas-wrapper'); pixelDensity(1); brightness = new Float32Array(COLS * ROWS); seenEver = new Uint8Array(COLS * ROWS); lastFullTime = new Float32Array(COLS * ROWS); UI.initLevelSelect(); noLoop(); updateThrowBase(); }
+function windowResized() { resizeCanvas(windowWidth, windowHeight); updateThrowBase(); }
+function updateThrowBase() { throwBaseX = width - 70; throwBaseY = height - 70; throwKnobX = throwBaseX; throwKnobY = throwBaseY; }
 
 function ensureAudio() { if (!audioCtx) initSound(); audioReady = true; }
-function initSound() {
-  const AC = window.AudioContext || window.webkitAudioContext;
-  audioCtx = new AC();
-  if (audioCtx.state === "suspended") audioCtx.resume();
-}
-function playSound(freq, dur, type='sine', vol=0.2) {
-  if (!audioReady || !audioCtx) return;
-  const t0 = audioCtx.currentTime;
-  const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
-  osc.type = type; osc.frequency.setValueAtTime(freq, t0);
-  gain.gain.setValueAtTime(0.0001, t0);
-  gain.gain.linearRampToValueAtTime(vol, t0 + 0.01);
-  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-  osc.connect(gain).connect(audioCtx.destination);
-  osc.start(t0); osc.stop(t0 + dur + 0.02);
-}
+function initSound() { const AC = window.AudioContext || window.webkitAudioContext; audioCtx = new AC(); if (audioCtx.state === "suspended") audioCtx.resume(); }
+function playSound(freq, dur, type='sine', vol=0.2) { if (!audioReady || !audioCtx) return; const t0 = audioCtx.currentTime; const osc = audioCtx.createOscillator(), gain = audioCtx.createGain(); osc.type = type; osc.frequency.setValueAtTime(freq, t0); gain.gain.setValueAtTime(0.0001, t0); gain.gain.linearRampToValueAtTime(vol, t0 + 0.01); gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur); osc.connect(gain).connect(audioCtx.destination); osc.start(t0); osc.stop(t0 + dur + 0.02); }
 
 function loadLevel(idx) {
-  if (idx >= LEVELS.length) { 
-    UI.showScreen('menu-screen');
-    return; 
-  }
-  levelIndex = idx; 
-  const lvl = LEVELS[idx];
-  brightness.fill(0); seenEver.fill(0); lastFullTime.fill(0);
-  
-  lightsOn = lvl.lightsOnAtStart;
-  battery = MAX_BATTERY;
-  currentFloorImg = floorImages[idx] || null; 
-  
-  walls = lvl.buildWalls();
-  walls.push({x:0,y:0,w:W,h:16}, {x:0,y:H-16,w:W,h:16}, {x:0,y:0,w:16,h:H}, {x:W-16,y:0,w:16,h:H});
-  
-  pickup = lvl.pickup ? { ...lvl.pickup, collected: false } : null;
-  switchObj = lvl.switchPuzzle ? { ...lvl.switchPuzzle, activated: false, holdTimer: 0, blackoutTriggered: false } : null;
-  doorWalls = (lvl.switchPuzzle && lvl.switchPuzzle.doors) ? lvl.switchPuzzle.doors : [];
-  
-  enemies = lvl.enemies.map(e => {
-    const t = ENEMY_TYPES[e.type];
-    return { ...e, r: 8, wpIndex: 0, speed: t.speed, sensitivity: t.sensitivity, alertMult: t.alertMult, searchTime: t.searchTime, color: t.color, state: "patrol", target: null, stateTimer: 0, searchAnchor: null };
-  });
-  
-  cameras = (lvl.cameras || []).map(c => ({ ...c, angle: c.baseAngle }));
-  
-  exitZone = lvl.exitZone; 
-  player.x = lvl.playerStart.x; player.y = lvl.playerStart.y;
-  stones = []; noiseEvents = []; deathsThisLevel = 0; 
-  dimMode = false; 
-  
-  UI.showScreen('game-screen'); 
-  updateMissionsUI(); 
-  showAida(lvl.central);
-  
-  const canvasElement = document.querySelector('canvas');
-  if (canvasElement) {
-    canvasElement.setAttribute('tabindex', '0');
-    canvasElement.focus();
-  }
-  window.focus();
-  loop();
-
-  levelStartTime = millis();
-  currentTime = 0;
-  levelCompleted = false; 
-
-  try {
-    bestTime = Number(localStorage.getItem("bestTime_" + idx)) || 0;
-    let storedTimes = localStorage.getItem("lastTimes_" + idx);
-    lastTimes = storedTimes ? JSON.parse(storedTimes) : [];
-    if (!Array.isArray(lastTimes)) lastTimes = [];
-  } catch(e) {
-    bestTime = 0; lastTimes = [];
-  }
+  if (idx >= LEVELS.length) { UI.showScreen('menu-screen'); return; } 
+  levelIndex = idx; const lvl = LEVELS[idx];
+  brightness.fill(0); seenEver.fill(0); lastFullTime.fill(0); lightsOn = lvl.lightsOnAtStart; battery = MAX_BATTERY; currentFloorImg = floorImages[idx] || null; 
+  walls = lvl.buildWalls(); walls.push({x:0,y:0,w:W,h:16}, {x:0,y:H-16,w:W,h:16}, {x:0,y:0,w:16,h:H}, {x:W-16,y:0,w:16,h:H}); 
+  pickup = lvl.pickup ? { ...lvl.pickup, collected: false } : null; switchObj = lvl.switchPuzzle ? { ...lvl.switchPuzzle, activated: false, holdTimer: 0, blackoutTriggered: false } : null; doorWalls = (lvl.switchPuzzle && lvl.switchPuzzle.doors) ? lvl.switchPuzzle.doors : []; 
+  enemies = lvl.enemies.map(e => { const t = ENEMY_TYPES[e.type]; return { ...e, r: 8, wpIndex: 0, speed: t.speed, sensitivity: t.sensitivity, alertMult: t.alertMult, searchTime: t.searchTime, color: t.color, state: "patrol", target: null, stateTimer: 0, searchAnchor: null }; }); 
+  cameras = (lvl.cameras || []).map(c => ({ ...c, angle: c.baseAngle })); 
+  exitZone = lvl.exitZone; player.x = lvl.playerStart.x; player.y = lvl.playerStart.y; stones = []; noiseEvents = []; deathsThisLevel = 0; dimMode = false; 
+  UI.showScreen('game-screen'); updateMissionsUI(); showAida(lvl.central); 
+  const canvasElement = document.querySelector('canvas'); if (canvasElement) { canvasElement.setAttribute('tabindex', '0'); canvasElement.focus(); } window.focus(); loop(); 
+  levelStartTime = millis(); currentTime = 0; levelCompleted = false; 
+  try { bestTime = Number(localStorage.getItem("bestTime_" + idx)) || 0; let storedTimes = localStorage.getItem("lastTimes_" + idx); lastTimes = storedTimes ? JSON.parse(storedTimes) : []; if (!Array.isArray(lastTimes)) lastTimes = []; } catch(e) { bestTime = 0; lastTimes = []; }
 }
 
-function showAida(lines) {
-  const el = document.getElementById("aida");
-  const portraitEl = document.getElementById("aida-portrait");
-  const textEl = document.getElementById("aida-text");
-  let i = 0;
-  function next() {
-    if (i >= lines.length) { el.classList.remove('show'); return; }
-    let line = lines[i];
-    let speakerImg = null;
-    if (line.toUpperCase().includes("EDMAN") || line.toUpperCase().includes("LARA")) speakerImg = laraImg;
-    else if (line.toUpperCase().includes("CENTRAL")) speakerImg = centralImg;
-    if (speakerImg) { portraitEl.style.backgroundImage = `url(${speakerImg.canvas.toDataURL()})`; portraitEl.style.display = 'block'; } 
-    else { portraitEl.style.display = 'none'; }
-    textEl.textContent = line;
-    el.classList.add('show');
-    i++;
-    setTimeout(() => { el.classList.remove('show'); setTimeout(next, 500); }, 3500);
-  }
-  next();
-}
-
+function showAida(lines) { const el = document.getElementById("aida"); const portraitEl = document.getElementById("aida-portrait"); const textEl = document.getElementById("aida-text"); let i = 0; function next() { if (i >= lines.length) { el.classList.remove('show'); return; } let line = lines[i]; let speakerImg = null; if (line.toUpperCase().includes("EDMAN") || line.toUpperCase().includes("LARA")) speakerImg = laraImg; else if (line.toUpperCase().includes("CENTRAL")) speakerImg = centralImg; if (speakerImg) { portraitEl.style.backgroundImage = `url(${speakerImg.canvas.toDataURL()})`; portraitEl.style.display = 'block'; } else { portraitEl.style.display = 'none'; } textEl.textContent = line; el.classList.add('show'); i++; setTimeout(() => { el.classList.remove('show'); setTimeout(next, 500); }, 3500); } next(); }
 function cellIndex(cx, cy) { return cy * COLS + cx; }
-function brightnessAt(wx, wy) {
-  const gx = constrain(floor(wx / CELL), 0, COLS - 1);
-  const gy = constrain(floor(wy / CELL), 0, ROWS - 1);
-  return brightness[cellIndex(gx, gy)];
-}
+function brightnessAt(wx, wy) { const gx = constrain(floor(wx / CELL), 0, COLS - 1); const gy = constrain(floor(wy / CELL), 0, ROWS - 1); return brightness[cellIndex(gx, gy)]; }
 
-function castFlashlight() {
-  const now = millis();
-  const range = currentLightRange() * (dimMode ? DIM_RANGE_FACTOR : 1);
-  const halfAngle = dimMode ? HALF_ANGLE_DIM : LIGHT_CONE / 2;
-  const rangeInCells = ceil(range / CELL) + 1;
-  const px = floor(player.x / CELL), py = floor(player.y / CELL);
+function castFlashlight() { const now = millis(); const range = currentLightRange() * (dimMode ? DIM_RANGE_FACTOR : 1); const halfAngle = dimMode ? HALF_ANGLE_DIM : LIGHT_CONE / 2; const rangeInCells = ceil(range / CELL) + 1; const px = floor(player.x / CELL), py = floor(player.y / CELL); for (let y = py - rangeInCells; y <= py + rangeInCells; y++) { for (let x = px - rangeInCells; x <= px + rangeInCells; x++) { if (x < 0 || y < 0 || x >= COLS || y >= ROWS) continue; const wx = x * CELL + CELL/2, wy = y * CELL + CELL/2; const d = dist(player.x, player.y, wx, wy); if (d <= range) { const angToCell = atan2(wy - player.y, wx - player.x); let diff = abs(player.aimAngle - angToCell); if (diff > PI) diff = TWO_PI - diff; if (diff < halfAngle) { if (hasLineOfSight(player.x, player.y, wx, wy)) { const idx = cellIndex(x, y); seenEver[idx] = 1; lastFullTime[idx] = now; brightness[idx] = 1; } } } } } if (frameCount % 10 === 0 && !dimMode) emitNoise(player.x, player.y, range * 1.5); }
+function hasLineOfSight(x0, y0, x1, y1) { const steps = 12; const dx = (x1 - x0) / steps, dy = (y1 - y0) / steps; for (let i = 1; i < steps; i++) { if (wallsBlock(x0 + dx*i, y0 + dy*i, 2)) return false; } return true; }
+function updateMemory() { const now = millis(); for (let i = 0; i < COLS * ROWS; i++) { if (lightsOn) { brightness[i] = 1; seenEver[i] = 1; lastFullTime[i] = now; continue; } if (!seenEver[i]) continue; const t = now - lastFullTime[i]; if (t < 0) continue; if (t < 100) brightness[i] = 1; else if (t < 1500) brightness[i] = lerp(1, MEMORY_FLOOR, (t - 100) / 1400); else brightness[i] = MEMORY_FLOOR; } }
+function wallsBlock(x, y, r) { for (const w of walls) { const cx = constrain(x, w.x, w.x + w.w); const cy = constrain(y, w.y, w.y + w.h); if (dist(x, y, cx, cy) < r) return true; } if (doorWalls && switchObj && !switchObj.activated) { for (const w of doorWalls) { const cx = constrain(x, w.x, w.x + w.w); const cy = constrain(y, w.y, w.y + w.h); if (dist(x, y, cx, cy) < r) return true; } } return false; }
+function tryMove(nx, ny) { if (!wallsBlock(nx, player.y, player.r)) player.x = nx; if (!wallsBlock(player.x, ny, player.r)) player.y = ny; }
+function emitNoise(x, y, radius) { noiseEvents.push({x, y, radius, time: millis()}); if (noiseEvents.length > 20) noiseEvents.shift(); }
 
-  for (let y = py - rangeInCells; y <= py + rangeInCells; y++) {
-    for (let x = px - rangeInCells; x <= px + rangeInCells; x++) {
-      if (x < 0 || y < 0 || x >= COLS || y >= ROWS) continue;
-      const wx = x * CELL + CELL/2, wy = y * CELL + CELL/2;
-      const d = dist(player.x, player.y, wx, wy);
-      if (d <= range) {
-        const angToCell = atan2(wy - player.y, wx - player.x);
-        let diff = abs(player.aimAngle - angToCell);
-        if (diff > PI) diff = TWO_PI - diff;
-        if (diff < halfAngle) {
-          if (hasLineOfSight(player.x, player.y, wx, wy)) {
-            const idx = cellIndex(x, y);
-            seenEver[idx] = 1; lastFullTime[idx] = now; brightness[idx] = 1;
-          }
-        }
-      }
-    }
-  }
-  if (frameCount % 10 === 0 && !dimMode) emitNoise(player.x, player.y, range * 1.5);
-}
-
-function hasLineOfSight(x0, y0, x1, y1) {
-  const steps = 12;
-  const dx = (x1 - x0) / steps, dy = (y1 - y0) / steps;
-  for (let i = 1; i < steps; i++) {
-    if (wallsBlock(x0 + dx*i, y0 + dy*i, 2)) return false;
-  }
-  return true;
-}
-
-function updateMemory() {
-  const now = millis();
-  for (let i = 0; i < COLS * ROWS; i++) {
-    if (lightsOn) { brightness[i] = 1; seenEver[i] = 1; lastFullTime[i] = now; continue; }
-    if (!seenEver[i]) continue;
-    const t = now - lastFullTime[i];
-    if (t < 0) continue;
-    if (t < 100) brightness[i] = 1;
-    else if (t < 1500) brightness[i] = lerp(1, MEMORY_FLOOR, (t - 100) / 1400);
-    else brightness[i] = MEMORY_FLOOR;
-  }
-}
-
-function wallsBlock(x, y, r) {
-  for (const w of walls) {
-    const cx = constrain(x, w.x, w.x + w.w); const cy = constrain(y, w.y, w.y + w.h);
-    if (dist(x, y, cx, cy) < r) return true;
-  }
-  if (doorWalls && switchObj && !switchObj.activated) {
-    for (const w of doorWalls) {
-      const cx = constrain(x, w.x, w.x + w.w); const cy = constrain(y, w.y, w.y + w.h);
-      if (dist(x, y, cx, cy) < r) return true;
-    }
-  }
-  return false;
-}
-
-function tryMove(nx, ny) {
-  if (!wallsBlock(nx, player.y, player.r)) player.x = nx;
-  if (!wallsBlock(player.x, ny, player.r)) player.y = ny;
-}
-
-function emitNoise(x, y, radius) {
-  noiseEvents.push({x, y, radius, time: millis()});
-  if (noiseEvents.length > 20) noiseEvents.shift();
-}
 function handleMovement() {
-    let dx = 0; let dy = 0;
-    let running = false;
-
+    let dx = 0, dy = 0, running = false;
     if (touchMoveId !== null) {
-        dx = moveCurrentX - moveStartX;
-        dy = moveCurrentY - moveStartY;
-        let mag = Math.sqrt(dx * dx + dy * dy);
-        const maxDist = 50; 
-        if (mag > maxDist) {
-            dx = (dx / mag) * maxDist;
-            dy = (dy / mag) * maxDist;
-            mag = maxDist;
-        }
-        if (mag > 5) { 
-            dx = dx / maxDist; 
-            dy = dy / maxDist;
-            running = mag > 40; 
-        } else {
-            dx = 0; dy = 0;
-        }
+        dx = moveCurrentX - moveStartX; dy = moveCurrentY - moveStartY;
+        let mag = Math.sqrt(dx * dx + dy * dy); const maxDist = 50; 
+        if (mag > maxDist) { dx = (dx / mag) * maxDist; dy = (dy / mag) * maxDist; mag = maxDist; }
+        if (mag > 5) { dx = dx / maxDist; dy = dy / maxDist; running = mag > 40; } else { dx = 0; dy = 0; }
     } else {
-        if (keyIsDown(87) || keyIsDown(UP_ARROW)) dy--;
-        if (keyIsDown(83) || keyIsDown(DOWN_ARROW)) dy++;
-        if (keyIsDown(65) || keyIsDown(LEFT_ARROW)) dx--;
-        if (keyIsDown(68) || keyIsDown(RIGHT_ARROW)) dx++;
-        running = keyIsDown(SHIFT) && !sneakMode;
+        if (keyIsDown(87) || keyIsDown(UP_ARROW)) dy--; if (keyIsDown(83) || keyIsDown(DOWN_ARROW)) dy++; if (keyIsDown(65) || keyIsDown(LEFT_ARROW)) dx--; if (keyIsDown(68) || keyIsDown(RIGHT_ARROW)) dx++; running = keyIsDown(SHIFT) && !sneakMode;
     }
-
-    let moving = dx !== 0 || dy !== 0;
-    let spd;
-    if (sneakMode) spd = currentWalkSpeed() * 0.45;
-    else if (running) spd = currentRunSpeed();
-    else spd = currentWalkSpeed();
-
-    if (moving) {
-        let len = Math.sqrt(dx * dx + dy * dy);
-        if (len > 1) { 
-            dx = dx / len;
-            dy = dy / len;
-        }
-        tryMove(player.x + dx * spd, player.y + dy * spd);
-        if (!sneakMode && frameCount % 14 === 0) { 
-            if (running) { emitNoise(player.x, player.y, 170); playSound(90, 0.06, 'sine', 0.09); } 
-            else { emitNoise(player.x, player.y, 70); playSound(90, 0.06, 'sine', 0.05); } 
-        } 
-    } 
+    let moving = dx !== 0 || dy !== 0, spd;
+    if (sneakMode) spd = currentWalkSpeed() * 0.45; else if (running) spd = currentRunSpeed(); else spd = currentWalkSpeed();
+    if (moving) { let len = Math.sqrt(dx * dx + dy * dy); if (len > 1) { dx = dx / len; dy = dy / len; } tryMove(player.x + dx * spd, player.y + dy * spd); if (!sneakMode && frameCount % 14 === 0) { if (running) { emitNoise(player.x, player.y, 170); playSound(90, 0.06, 'sine', 0.09); } else { emitNoise(player.x, player.y, 70); playSound(90, 0.06, 'sine', 0.05); } } } 
 }
 
-function throwStone(tx, ty) {
-  if (stones.filter(s => s.alive).length >= currentStoneCap()) return;
-  const ang = atan2(ty - player.y, tx - player.x);
-  stones.push({ x: player.x, y: player.y, vx: cos(ang)*6, vy: sin(ang)*6, alive: true });
-}
-
-function updateStones() {
-  for (const s of stones) {
-    if (!s.alive) continue;
-    const nx = s.x + s.vx, ny = s.y + s.vy;
-    if (wallsBlock(nx, ny, 3) || nx < 10 || nx > W-10 || ny < 10 || ny > H-10) {
-      s.alive = false; emitNoise(s.x, s.y, 220); playSound(300, 0.2, 'sawtooth', 0.14);
-    } else { s.x = nx; s.y = ny; }
-  }
-}
-
-function updateEnemies() {
-  const now = millis();
-  for (const enemy of enemies) {
-    if (enemy.state === "patrol") {
-      const wp = enemy.waypoints[enemy.wpIndex % enemy.waypoints.length];
-      moveTowards(enemy, wp.x, wp.y, enemy.speed);
-      if (dist(enemy.x, enemy.y, wp.x, wp.y) < 6) enemy.wpIndex++;
-      for (const n of noiseEvents) {
-        if (now - n.time < 200 && dist(enemy.x, enemy.y, n.x, n.y) <= n.radius * enemy.sensitivity) {
-          enemy.state = "alert"; enemy.target = {x:n.x,y:n.y}; enemy.stateTimer = now; break;
-        }
-      }
-    } else if (enemy.state === "alert") {
-      moveTowards(enemy, enemy.target.x, enemy.target.y, enemy.speed * enemy.alertMult);
-      if (dist(enemy.x, enemy.y, enemy.target.x, enemy.target.y) < 8) {
-        enemy.state = "search"; enemy.stateTimer = now; enemy.searchAnchor = { x: enemy.target.x, y: enemy.target.y };
-      }
-      for (const n of noiseEvents) {
-        if (now - n.time < 200 && dist(enemy.x, enemy.y, n.x, n.y) <= n.radius * enemy.sensitivity) {
-          enemy.target = {x:n.x,y:n.y};
-        }
-      }
-    } else if (enemy.state === "search") {
-      const a = enemy.searchAnchor;
-      moveTowards(enemy, a.x + sin(now * 0.0025) * 30, a.y + cos(now * 0.003) * 30, enemy.speed * 0.6);
-      if (now - enemy.stateTimer > enemy.searchTime) enemy.state = "patrol";
-    }
-    if (dist(enemy.x, enemy.y, player.x, player.y) < enemy.r + player.r + 6) {
-      deathsThisLevel++; resetRoom(true); return;
-    }
-  }
-}
-
-function moveTowards(e, tx, ty, spd) {
-  const ang = atan2(ty - e.y, tx - e.x);
-  if (!wallsBlock(e.x + cos(ang) * spd, e.y, e.r)) e.x += cos(ang) * spd;
-  if (!wallsBlock(e.x, e.y + sin(ang) * spd, e.r)) e.y += sin(ang) * spd;
-}
-
-function updateCameras() {
-  for (const cam of cameras) {
-    cam.angle = cam.baseAngle + sin(millis() * cam.speed) * cam.sweepRange;
-    castCameraLight(cam);
-    const d = dist(cam.x, cam.y, player.x, player.y);
-    if (d < cam.range) {
-      const angToP = atan2(player.y - cam.y, player.x - cam.x);
-      let diff = abs(cam.angle - angToP);
-      if (diff > PI) diff = TWO_PI - diff;
-      if (diff < cam.fov / 2) {
-        if (hasLineOfSight(cam.x, cam.y, player.x, player.y)) {
-          deathsThisLevel++; resetRoom(true); return;
-        }
-      }
-    }
-  }
-}
-
-function castCameraLight(cam) {
-  const now = millis();
-  const rangeInCells = ceil(cam.range / CELL) + 1;
-  const px = floor(cam.x / CELL), py = floor(cam.y / CELL);
-  for (let y = py - rangeInCells; y <= py + rangeInCells; y++) {
-    for (let x = px - rangeInCells; x <= px + rangeInCells; x++) {
-      if (x < 0 || y < 0 || x >= COLS || y >= ROWS) continue;
-      const wx = x * CELL + CELL/2, wy = y * CELL + CELL/2;
-      const d = dist(cam.x, cam.y, wx, wy);
-      if (d <= cam.range) {
-        const angToCell = atan2(wy - cam.y, wx - cam.x);
-        let diff = abs(cam.angle - angToCell);
-        if (diff > PI) diff = TWO_PI - diff;
-        if (diff < cam.fov / 2) {
-          if (hasLineOfSight(cam.x, cam.y, wx, wy)) {
-            const idx = cellIndex(x, y);
-            seenEver[idx] = 1; lastFullTime[idx] = now;
-            brightness[idx] = Math.max(brightness[idx], 0.4);
-          }
-        }
-      }
-    }
-  }
-}
-
-function drawCameras() {
-  for (const cam of cameras) {
-    fill(60, 60, 70); stroke(100, 100, 100); strokeWeight(2);
-    circle(cam.x, cam.y, 16);
-    fill(255, 50, 50); noStroke();
-    circle(cam.x, cam.y, 8);
-    push();
-    translate(cam.x, cam.y); rotate(cam.angle); noStroke();
-    fill(255, 0, 0, 30); arc(0, 0, cam.range*2, cam.range*2, -cam.fov/2, cam.fov/2, PIE);
-    fill(255, 50, 50, 40); arc(0, 0, cam.range*1.5, cam.range*1.5, -cam.fov/2, cam.fov/2, PIE);
-    pop();
-  }
-}
-
-function updateMissionsUI() {
-  const missions = [];
-  if (switchObj) missions.push({text:'Activa el panel para abrir las rejas', done: switchObj.activated, optional: false});
-  if (pickup) missions.push({text:`(Opcional) Encuentra: ${pickup.label}`, done: pickup.collected, optional: true});
-  missions.push({text:'Encuentra la salida del sector', done: false, optional: false});
-  const list = document.getElementById('mission-list');
-  list.innerHTML = missions.map(m => `<div class="mission ${m.done?'done':''} ${m.optional?'optional':''}"><span>${m.done?'✓':'○'}</span> ${m.text}</div>`).join('');
-}
-
-function updateHUD() {
-  document.getElementById('stat-level').textContent = levelIndex;
-  document.getElementById('stat-stones').textContent = `${currentStoneCap() - stones.filter(s=>s.alive).length}/${currentStoneCap()}`;
-  const timeEl = document.getElementById('stat-time');
-  if (timeEl) timeEl.textContent = (currentTime / 1000).toFixed(1) + "s";
-
-  const batteryEl = document.getElementById('stat-light');
-  const fillEl = document.getElementById('battery-fill');
-  const batterySec = (battery / 1000).toFixed(1);
-  batteryEl.textContent = `${batterySec}s`;
-  fillEl.style.width = (battery / MAX_BATTERY * 100) + '%';
-
-  if (battery <= 2000) batteryEl.style.color = 'var(--danger)';
-  else if (dimMode) batteryEl.style.color = 'var(--purple)';
-  else if (flashlightOn) batteryEl.style.color = 'var(--accent)';
-  else batteryEl.style.color = 'var(--warn)';
-  
-  const ups = [];
-  if (upgrades.extendedRadius) ups.push("Largo Alcance");
-  if (upgrades.silentLight) ups.push("Modo Atenuado");
-  if (upgrades.directional) ups.push("Radio Direccional");
-  document.getElementById('stat-upgrades').innerHTML = ups.length ? ups.join('<br>') : '—';
-}
+function throwStone(tx, ty) { if (stones.filter(s => s.alive).length >= currentStoneCap()) return; const ang = atan2(ty - player.y, tx - player.x); stones.push({ x: player.x, y: player.y, vx: cos(ang)*6, vy: sin(ang)*6, alive: true }); }
+function updateStones() { for (const s of stones) { if (!s.alive) continue; const nx = s.x + s.vx, ny = s.y + s.vy; if (wallsBlock(nx, ny, 3) || nx < 10 || nx > W-10 || ny < 10 || ny > H-10) { s.alive = false; emitNoise(s.x, s.y, 220); playSound(300, 0.2, 'sawtooth', 0.14); } else { s.x = nx; s.y = ny; } } }
+function updateEnemies() { const now = millis(); for (const enemy of enemies) { if (enemy.state === "patrol") { const wp = enemy.waypoints[enemy.wpIndex % enemy.waypoints.length]; moveTowards(enemy, wp.x, wp.y, enemy.speed); if (dist(enemy.x, enemy.y, wp.x, wp.y) < 6) enemy.wpIndex++; for (const n of noiseEvents) { if (now - n.time < 200 && dist(enemy.x, enemy.y, n.x, n.y) <= n.radius * enemy.sensitivity) { enemy.state = "alert"; enemy.target = {x:n.x,y:n.y}; enemy.stateTimer = now; break; } } } else if (enemy.state === "alert") { moveTowards(enemy, enemy.target.x, enemy.target.y, enemy.speed * enemy.alertMult); if (dist(enemy.x, enemy.y, enemy.target.x, enemy.target.y) < 8) { enemy.state = "search"; enemy.stateTimer = now; enemy.searchAnchor = { x: enemy.target.x, y: enemy.target.y }; } for (const n of noiseEvents) { if (now - n.time < 200 && dist(enemy.x, enemy.y, n.x, n.y) <= n.radius * enemy.sensitivity) { enemy.target = {x:n.x,y:n.y}; } } } else if (enemy.state === "search") { const a = enemy.searchAnchor; moveTowards(enemy, a.x + sin(now * 0.0025) * 30, a.y + cos(now * 0.003) * 30, enemy.speed * 0.6); if (now - enemy.stateTimer > enemy.searchTime) enemy.state = "patrol"; } if (dist(enemy.x, enemy.y, player.x, player.y) < enemy.r + player.r + 6) { deathsThisLevel++; resetRoom(true); return; } } }
+function moveTowards(e, tx, ty, spd) { const ang = atan2(ty - e.y, tx - e.x); if (!wallsBlock(e.x + cos(ang) * spd, e.y, e.r)) e.x += cos(ang) * spd; if (!wallsBlock(e.x, e.y + sin(ang) * spd, e.r)) e.y += sin(ang) * spd; }
+function updateCameras() { for (const cam of cameras) { cam.angle = cam.baseAngle + sin(millis() * cam.speed) * cam.sweepRange; castCameraLight(cam); const d = dist(cam.x, cam.y, player.x, player.y); if (d < cam.range) { const angToP = atan2(player.y - cam.y, player.x - cam.x); let diff = abs(cam.angle - angToP); if (diff > PI) diff = TWO_PI - diff; if (diff < cam.fov / 2) { if (hasLineOfSight(cam.x, cam.y, player.x, player.y)) { deathsThisLevel++; resetRoom(true); return; } } } } }
+function castCameraLight(cam) { const now = millis(); const rangeInCells = ceil(cam.range / CELL) + 1; const px = floor(cam.x / CELL), py = floor(cam.y / CELL); for (let y = py - rangeInCells; y <= py + rangeInCells; y++) { for (let x = px - rangeInCells; x <= px + rangeInCells; x++) { if (x < 0 || y < 0 || x >= COLS || y >= ROWS) continue; const wx = x * CELL + CELL/2, wy = y * CELL + CELL/2; const d = dist(cam.x, cam.y, wx, wy); if (d <= cam.range) { const angToCell = atan2(wy - cam.y, wx - cam.x); let diff = abs(cam.angle - angToCell); if (diff > PI) diff = TWO_PI - diff; if (diff < cam.fov / 2) { if (hasLineOfSight(cam.x, cam.y, wx, wy)) { const idx = cellIndex(x, y); seenEver[idx] = 1; lastFullTime[idx] = now; brightness[idx] = Math.max(brightness[idx], 0.4); } } } } } }
+function drawCameras() { for (const cam of cameras) { fill(60, 60, 70); stroke(100, 100, 100); strokeWeight(2); circle(cam.x, cam.y, 16); fill(255, 50, 50); noStroke(); circle(cam.x, cam.y, 8); push(); translate(cam.x, cam.y); rotate(cam.angle); noStroke(); fill(255, 0, 0, 30); arc(0, 0, cam.range*2, cam.range*2, -cam.fov/2, cam.fov/2, PIE); fill(255, 50, 50, 40); arc(0, 0, cam.range*1.5, cam.range*1.5, -cam.fov/2, cam.fov/2, PIE); pop(); } }
+function updateMissionsUI() { const missions = []; if (switchObj) missions.push({text:'Activa el panel para abrir las rejas', done: switchObj.activated, optional: false}); if (pickup) missions.push({text:`(Opcional) Encuentra: ${pickup.label}`, done: pickup.collected, optional: true}); missions.push({text:'Encuentra la salida del sector', done: false, optional: false}); const list = document.getElementById('mission-list'); list.innerHTML = missions.map(m => `<div class="mission ${m.done?'done':''} ${m.optional?'optional':''}"><span>${m.done?'✓':'○'}</span> ${m.text}</div>`).join(''); }
+function updateHUD() { document.getElementById('stat-level').textContent = levelIndex; document.getElementById('stat-stones').textContent = `${currentStoneCap() - stones.filter(s=>s.alive).length}/${currentStoneCap()}`; const timeEl = document.getElementById('stat-time'); if (timeEl) timeEl.textContent = (currentTime / 1000).toFixed(1) + "s"; const batteryEl = document.getElementById('stat-light'); const fillEl = document.getElementById('battery-fill'); const batterySec = (battery / 1000).toFixed(1); batteryEl.textContent = `${batterySec}s`; fillEl.style.width = (battery / MAX_BATTERY * 100) + '%'; if (battery <= 2000) batteryEl.style.color = 'var(--danger)'; else if (dimMode) batteryEl.style.color = 'var(--purple)'; else if (flashlightOn) batteryEl.style.color = 'var(--accent)'; else batteryEl.style.color = 'var(--warn)'; const ups = []; if (upgrades.extendedRadius) ups.push("Largo Alcance"); if (upgrades.silentLight) ups.push("Modo Atenuado"); if (upgrades.directional) ups.push("Radio Direccional"); document.getElementById('stat-upgrades').innerHTML = ups.length ? ups.join('<br>') : '—'; }
 
 function draw() {
-  background(5, 5, 8);
-  if (!audioReady || paused) return;
+  background(5, 5, 8); if (!audioReady || paused) return;
+  camX = player.x; camY = player.y; if (width < W) camX = constrain(camX, width/2, W - width/2); else camX = W/2; if (height < H) camY = constrain(camY, height/2, H - height/2); else camY = H/2;
+  gameMouseX = mouseX - width/2 + camX; gameMouseY = mouseY - height/2 + camY;
 
-  // --- LÓGICA DE CÁMARA ---
-  camX = player.x;
-  camY = player.y;
-  if (width < W) camX = constrain(camX, width/2, W - width/2); else camX = W/2;
-  if (height < H) camY = constrain(camY, height/2, H - height/2); else camY = H/2;
-
-  gameMouseX = mouseX - width/2 + camX;
-  gameMouseY = mouseY - height/2 + camY;
-
-  // LÓGICA JOYSTICK DERECHO (APUNTAR)
+  // LÓGICA JOYSTICK DERECHO (APUNTAR LUZ)
   if (touchAimId !== null) {
-      let dxAim = aimCurrentX - aimStartX;
-      let dyAim = aimCurrentY - aimStartY;
-      if (Math.sqrt(dxAim*dxAim + dyAim*dyAim) > 5) { // Evita que apunte a 0 si no mueve el dedo
-          player.aimAngle = atan2(dyAim, dxAim);
-      }
-  } else {
+      let dxAim = aimCurrentX - aimStartX, dyAim = aimCurrentY - aimStartY;
+      if (Math.sqrt(dxAim*dxAim + dyAim*dyAim) > 5) player.aimAngle = atan2(dyAim, dxAim);
+  } else if (touches.length === 0) {
+      // Si no hay toques, es ratón (PC)
       player.aimAngle = atan2(gameMouseY - player.y, gameMouseX - player.x);
   }
 
   handleMovement(); updateStones(); updateEnemies(); updateCameras();
-  
-  if (flashlightOn && battery > 0) {
-    battery -= deltaTime * (dimMode ? 0.4 : 1);
-    if (battery <= 0) {
-      battery = 0; flashlightOn = false; dimMode = false;
-      playSound(200, 0.2, 'square', 0.1); showMsg("BATERÍA AGOTADA", "var(--danger)");
-    }
-    castFlashlight();
-  } else { dimMode = false; }
-  updateMemory();
-  
-  noiseEvents = noiseEvents.filter(n => millis() - n.time < 250);
-  currentTime = millis() - levelStartTime;
+  if (flashlightOn && battery > 0) { battery -= deltaTime * (dimMode ? 0.4 : 1); if (battery <= 0) { battery = 0; flashlightOn = false; dimMode = false; playSound(200, 0.2, 'square', 0.1); showMsg("BATERÍA AGOTADA", "var(--danger)"); } castFlashlight(); } else { dimMode = false; } updateMemory();
+  noiseEvents = noiseEvents.filter(n => millis() - n.time < 250); currentTime = millis() - levelStartTime;
 
-  // --- DIBUJAR MUNDO CON CÁMARA ---
-  push();
-  translate(width/2 - camX, height/2 - camY);
-
-  noStroke();
-  for (let gy = 0; gy < ROWS; gy++) {
-    for (let gx = 0; gx < COLS; gx++) {
-      const idx = cellIndex(gx, gy); const b = brightness[idx];
-      if (b <= 0.001 && !lightsOn) continue;
-      const wx = gx * CELL, wy = gy * CELL;
-      
-      // Optimización: solo dibujar lo que está en pantalla
-      if (wx + CELL < camX - width/2 || wx > camX + width/2 || wy + CELL < camY - height/2 || wy > camY + height/2) continue;
-
-      let isWall = false;
-      for (const w of walls) { if (wx + CELL > w.x && wx < w.x + w.w && wy + CELL > w.y && wy < w.y + w.h) { isWall = true; break; } }
-      if (!isWall && doorWalls && switchObj && !switchObj.activated) {
-        for (const w of doorWalls) { if (wx + CELL > w.x && wx < w.x + w.w && wy + CELL > w.y && wy < w.y + w.h) { isWall = true; break; } }
-      }
-      if (isWall) { 
-        if (lightsOn) fill(80, 80, 90); else fill(40, 40, 40, b * 255); 
-        rect(wx, wy, CELL, CELL); 
-        if (b > 0.2 || lightsOn) { fill(120, 120, 130, lightsOn ? 150 : b * 100); rect(wx, wy, CELL, 3); }
-      }
-      else { 
-        if (currentFloorImg) {
-          drawingContext.globalAlpha = lightsOn ? 1 : b; 
-          image(currentFloorImg, wx, wy, CELL, CELL, wx, wy, CELL, CELL);
-          drawingContext.globalAlpha = 1;
-        } else {
-          if (lightsOn) fill(30, 30, 40); else fill(20, 25, 35, b * 150); 
-          rect(wx, wy, CELL, CELL); 
-        }
-      }
-    }
-  }
-
-  if (flashlightOn && battery > 0 && !lightsOn) {
-    const range = currentLightRange() * (dimMode ? DIM_RANGE_FACTOR : 1);
-    const halfAngle = dimMode ? HALF_ANGLE_DIM : LIGHT_CONE / 2;
-    const flicker = 1 + (sin(frameCount * 0.8) * 0.03) + (random() * 0.04 - 0.02);
-    const flickRange = range * flicker;
-    push(); translate(player.x, player.y); rotate(player.aimAngle); noStroke();
-    if (dimMode) { fill(187, 102, 255, 25); } else { fill(255, 255, 200, 15); }
-    arc(0, 0, flickRange*2, flickRange*2, -halfAngle, halfAngle, PIE);
-    if (dimMode) { fill(187, 102, 255, 45); } else { fill(255, 255, 220, 30); }
-    arc(0, 0, flickRange*1.5, flickRange*1.5, -halfAngle, halfAngle, PIE);
-    if (dimMode) { fill(220, 180, 255, 60); } else { fill(255, 255, 240, 50); }
-    arc(0, 0, flickRange*0.8, flickRange*0.8, -halfAngle, halfAngle, PIE);
-    if (frameCount % 2 === 0) {
-      for(let i=0; i<3; i++) {
-        let r = random(flickRange); let a = random(-halfAngle, halfAngle); let dustSize = random(1, 2.5);
-        fill(255, 255, 255, random(30, 80)); circle(cos(a)*r, sin(a)*r, dustSize);
-      }
-    }
-    pop();
-  }
-
+  push(); translate(width/2 - camX, height/2 - camY); noStroke();
+  for (let gy = 0; gy < ROWS; gy++) { for (let gx = 0; gx < COLS; gx++) { const idx = cellIndex(gx, gy); const b = brightness[idx]; if (b <= 0.001 && !lightsOn) continue; const wx = gx * CELL, wy = gy * CELL; if (wx + CELL < camX - width/2 || wx > camX + width/2 || wy + CELL < camY - height/2 || wy > camY + height/2) continue; let isWall = false; for (const w of walls) { if (wx + CELL > w.x && wx < w.x + w.w && wy + CELL > w.y && wy < w.y + w.h) { isWall = true; break; } } if (!isWall && doorWalls && switchObj && !switchObj.activated) { for (const w of doorWalls) { if (wx + CELL > w.x && wx < w.x + w.w && wy + CELL > w.y && wy < w.y + w.h) { isWall = true; break; } } } if (isWall) { if (lightsOn) fill(80, 80, 90); else fill(40, 40, 40, b * 255); rect(wx, wy, CELL, CELL); if (b > 0.2 || lightsOn) { fill(120, 120, 130, lightsOn ? 150 : b * 100); rect(wx, wy, CELL, 3); } } else { if (currentFloorImg) { drawingContext.globalAlpha = lightsOn ? 1 : b; image(currentFloorImg, wx, wy, CELL, CELL, wx, wy, CELL, CELL); drawingContext.globalAlpha = 1; } else { if (lightsOn) fill(30, 30, 40); else fill(20, 25, 35, b * 150); rect(wx, wy, CELL, CELL); } } } }
+  if (flashlightOn && battery > 0 && !lightsOn) { const range = currentLightRange() * (dimMode ? DIM_RANGE_FACTOR : 1); const halfAngle = dimMode ? HALF_ANGLE_DIM : LIGHT_CONE / 2; const flicker = 1 + (sin(frameCount * 0.8) * 0.03) + (random() * 0.04 - 0.02); const flickRange = range * flicker; push(); translate(player.x, player.y); rotate(player.aimAngle); noStroke(); if (dimMode) { fill(187, 102, 255, 25); } else { fill(255, 255, 200, 15); } arc(0, 0, flickRange*2, flickRange*2, -halfAngle, halfAngle, PIE); if (dimMode) { fill(187, 102, 255, 45); } else { fill(255, 255, 220, 30); } arc(0, 0, flickRange*1.5, flickRange*1.5, -halfAngle, halfAngle, PIE); if (dimMode) { fill(220, 180, 255, 60); } else { fill(255, 255, 240, 50); } arc(0, 0, flickRange*0.8, flickRange*0.8, -halfAngle, halfAngle, PIE); if (frameCount % 2 === 0) { for(let i=0; i<3; i++) { let r = random(flickRange); let a = random(-halfAngle, halfAngle); let dustSize = random(1, 2.5); fill(255, 255, 255, random(30, 80)); circle(cos(a)*r, sin(a)*r, dustSize); } } pop(); }
   const lvl = LEVELS[levelIndex];
-  if(lvl.batteryPickups) {
-    for (const b of lvl.batteryPickups) {
-      if (brightnessAt(b.x, b.y) > 0.05 || lightsOn) {
-        fill(255, 255, 0, 80); circle(b.x, b.y, 14);
-        fill(255, 255, 0, 200); rectMode(CENTER); rect(b.x, b.y, 10, 6); rectMode(CORNER);
-      }
-    }
-  }
-  if (pickup && !pickup.collected && brightnessAt(pickup.x, pickup.y) > 0.05) {
-    fill(187, 102, 255, 80); circle(pickup.x, pickup.y, 18);
-    fill(187, 102, 255, 200); push(); translate(pickup.x, pickup.y); rotate(PI/4); rectMode(CENTER); rect(0, 0, 12, 12); pop(); rectMode(CORNER);
-  }
-  if (switchObj) {
-    const bs = lightsOn ? 1 : brightnessAt(switchObj.x, switchObj.y);
-    if (bs > 0.05) {
-      fill(switchObj.activated ? color(51,255,119, bs*80) : color(255,170,0, bs*80)); circle(switchObj.x, switchObj.y, 24);
-      fill(switchObj.activated ? color(51,255,119, bs*255) : color(255,170,0, bs*255)); rectMode(CENTER); rect(switchObj.x, switchObj.y, 16, 16); rectMode(CORNER);
-    }
-    if (!switchObj.activated && switchObj.holdTimer > 0) {
-      const prog = constrain(switchObj.holdTimer / 1000, 0, 1);
-      noFill(); stroke(51, 255, 119, 220); strokeWeight(3);
-      arc(switchObj.x, switchObj.y, 30, 30, -HALF_PI, -HALF_PI + prog * TWO_PI); noStroke();
-    }
-  }
-  const exitB = lightsOn ? 1 : brightnessAt(exitZone.x + exitZone.w/2, exitZone.y + exitZone.h/2);
-  const exitLevel = Math.max(0.2, exitB);
-  fill(51, 255, 119, exitLevel * 80); rect(exitZone.x - 5, exitZone.y - 5, exitZone.w + 10, exitZone.h + 10, 5);
-  fill(51, 255, 119, exitLevel * 200); rect(exitZone.x, exitZone.y, exitZone.w, exitZone.h, 3);
-
-  for (const e of enemies) {
-    if (brightnessAt(e.x, e.y) > 0.05 || lightsOn) {
-      fill(e.color[0], e.color[1], e.color[2], 60); circle(e.x, e.y, e.r * 3.5);
-      fill(e.color[0], e.color[1], e.color[2], 150); circle(e.x, e.y, e.r * 2.5);
-      fill(e.color[0], e.color[1], e.color[2], 230); circle(e.x, e.y, e.r * 1.5);
-    }
-  }
+  if(lvl.batteryPickups) { for (const b of lvl.batteryPickups) { if (brightnessAt(b.x, b.y) > 0.05 || lightsOn) { fill(255, 255, 0, 80); circle(b.x, b.y, 14); fill(255, 255, 0, 200); rectMode(CENTER); rect(b.x, b.y, 10, 6); rectMode(CORNER); } } }
+  if (pickup && !pickup.collected && brightnessAt(pickup.x, pickup.y) > 0.05) { fill(187, 102, 255, 80); circle(pickup.x, pickup.y, 18); fill(187, 102, 255, 200); push(); translate(pickup.x, pickup.y); rotate(PI/4); rectMode(CENTER); rect(0, 0, 12, 12); pop(); rectMode(CORNER); }
+  if (switchObj) { const bs = lightsOn ? 1 : brightnessAt(switchObj.x, switchObj.y); if (bs > 0.05) { fill(switchObj.activated ? color(51,255,119, bs*80) : color(255,170,0, bs*80)); circle(switchObj.x, switchObj.y, 24); fill(switchObj.activated ? color(51,255,119, bs*255) : color(255,170,0, bs*255)); rectMode(CENTER); rect(switchObj.x, switchObj.y, 16, 16); rectMode(CORNER); } if (!switchObj.activated && switchObj.holdTimer > 0) { const prog = constrain(switchObj.holdTimer / 1000, 0, 1); noFill(); stroke(51, 255, 119, 220); strokeWeight(3); arc(switchObj.x, switchObj.y, 30, 30, -HALF_PI, -HALF_PI + prog * TWO_PI); noStroke(); } }
+  const exitB = lightsOn ? 1 : brightnessAt(exitZone.x + exitZone.w/2, exitZone.y + exitZone.h/2); const exitLevel = Math.max(0.2, exitB); fill(51, 255, 119, exitLevel * 80); rect(exitZone.x - 5, exitZone.y - 5, exitZone.w + 10, exitZone.h + 10, 5); fill(51, 255, 119, exitLevel * 200); rect(exitZone.x, exitZone.y, exitZone.w, exitZone.h, 3);
+  for (const e of enemies) { if (brightnessAt(e.x, e.y) > 0.05 || lightsOn) { fill(e.color[0], e.color[1], e.color[2], 60); circle(e.x, e.y, e.r * 3.5); fill(e.color[0], e.color[1], e.color[2], 150); circle(e.x, e.y, e.r * 2.5); fill(e.color[0], e.color[1], e.color[2], 230); circle(e.x, e.y, e.r * 1.5); } }
   drawCameras();
   for (const s of stones) { if (s.alive) { fill(150, 150, 150, 200); circle(s.x, s.y, 5); } }
 
-  push(); translate(player.x, player.y);
-  fill(0, 255, 229, 40); circle(0, 0, 50);
-  fill(0, 255, 229, 80); circle(0, 0, 30);
-  imageMode(CENTER); if (playerImg) image(playerImg, 0, 0, 32, 32); imageMode(CORNER);
-  push(); rotate(player.aimAngle);
-  if (dimMode) stroke(187, 102, 255, 220); else stroke(255, 255, 255, flashlightOn ? 220 : 120);
-  strokeWeight(2); line(18, 0, 28, 0); pop(); noStroke(); pop();
-
-  pop(); // Fin del dibujado de mundo
+  push(); translate(player.x, player.y); fill(0, 255, 229, 40); circle(0, 0, 50); fill(0, 255, 229, 80); circle(0, 0, 30); imageMode(CENTER); if (playerImg) image(playerImg, 0, 0, 32, 32); imageMode(CORNER); push(); rotate(player.aimAngle); if (dimMode) stroke(187, 102, 255, 220); else stroke(255, 255, 255, flashlightOn ? 220 : 120); strokeWeight(2); line(18, 0, 28, 0); pop(); noStroke(); pop();
+  pop(); 
 
   // --- DIBUJAR JOYSTICKS (Pantalla fija) ---
-  if (touchMoveId !== null) {
-      noFill(); stroke(0, 255, 229, 100); strokeWeight(3);
-      circle(moveStartX, moveStartY, 100);
-      fill(0, 255, 229, 150); noStroke();
-      circle(moveCurrentX, moveCurrentY, 40);
-  }
+  if (touchMoveId !== null) { noFill(); stroke(0, 255, 229, 100); strokeWeight(3); circle(moveStartX, moveStartY, 100); fill(0, 255, 229, 150); noStroke(); circle(moveCurrentX, moveCurrentY, 40); }
+  if (touchAimId !== null) { noFill(); stroke(255, 255, 200, 100); strokeWeight(3); circle(aimStartX, aimStartY, 100); fill(255, 255, 200, 150); noStroke(); circle(aimCurrentX, aimCurrentY, 40); }
   
-  if (touchAimId !== null) {
-      noFill(); stroke(255, 255, 200, 100); strokeWeight(3);
-      circle(aimStartX, aimStartY, 100);
-      fill(255, 255, 200, 150); noStroke();
-      circle(aimCurrentX, aimCurrentY, 40);
-  }
+  // DIBUJAR JOYSTICK DE PIEDRA (Estático)
+  noFill(); stroke(255, 150, 0, 100); strokeWeight(3); circle(throwBaseX, throwBaseY, 80);
+  fill(255, 150, 0, 150); noStroke(); circle(throwKnobX, throwKnobY, 40);
+  fill(255, 255, 255); textSize(10); textAlign(CENTER, CENTER); textStyle(BOLD); text("PIEDRA", throwBaseX, throwBaseY); textStyle(NORMAL);
 
-  checkPickup(); checkBatteryPickups(); updateSwitchHold();
-  updateHUD();
-  checkExit();
+  checkPickup(); checkBatteryPickups(); updateSwitchHold(); updateHUD(); checkExit();
 }
 
-function checkExit() {
-  if (levelCompleted) return; 
-  if (player.x > exitZone.x && player.x < exitZone.x + exitZone.w &&
-      player.y > exitZone.y && player.y < exitZone.y + exitZone.h) {
-    
-    levelCompleted = true;
-    playSound(500, 0.5, 'sine', 0.2);
-    noLoop();
-    
-    try {
-      const finalTime = currentTime; 
-      if (!Array.isArray(lastTimes)) lastTimes = [];
-      lastTimes.unshift(finalTime);
-      if (lastTimes.length > 5) lastTimes.pop();
-      
-      try { localStorage.setItem("lastTimes_" + levelIndex, JSON.stringify(lastTimes)); } catch(e){}
-      
-      let isNewRecord = false;
-      if (bestTime === 0 || finalTime < bestTime) {
-        bestTime = finalTime;
-        try { localStorage.setItem("bestTime_" + levelIndex, String(bestTime)); } catch(e){}
-        isNewRecord = true;
-      }
-      
-      let timeText = "Tu tiempo: " + (finalTime / 1000).toFixed(2) + "s";
-      if (isNewRecord) {
-        timeText += "<br><span style='color:var(--accent);'>🏆 ¡NUEVO RÉCORD!</span>";
-      } else {
-        timeText += "<br>Récord: " + (bestTime / 1000).toFixed(2) + "s";
-      }
-      document.getElementById('complete-time').innerHTML = timeText;
-      
-      const btnNext = document.getElementById('btn-next');
-      if (levelIndex >= LEVELS.length - 1) btnNext.textContent = "MENÚ PRINCIPAL";
-      else btnNext.textContent = "SIGUIENTE NIVEL";
-      
-      document.getElementById('btn-prev').style.display = (levelIndex > 0) ? 'block' : 'none';
-      
-      document.getElementById('level-complete-overlay').classList.add('active');
-    } catch(e) {
-      console.error("Error en checkExit:", e);
-      document.getElementById('complete-time').innerHTML = "Nivel completado";
-      document.getElementById('level-complete-overlay').classList.add('active');
-    }
-  }
-}
-
-function checkPickup() {
-  if (!pickup || pickup.collected) return;
-  if (dist(player.x, player.y, pickup.x, pickup.y) < player.r + pickup.r + 4) {
-    pickup.collected = true; upgrades[pickup.upgradeKey] = true;
-    playSound(1300, 0.4, 'sine', 0.22); showMsg("Equipo encontrado: " + pickup.label, "var(--purple)");
-    updateMissionsUI();
-  }
-}
-function checkBatteryPickups() {
-  const lvl = LEVELS[levelIndex];
-  if(!lvl.batteryPickups) return;
-  for (let i = lvl.batteryPickups.length - 1; i >= 0; i--) {
-    const b = lvl.batteryPickups[i];
-    if (dist(player.x, player.y, b.x, b.y) < player.r + b.r + 4) {
-      battery = Math.min(MAX_BATTERY, battery + BATTERY_PICKUP_AMOUNT);
-      lvl.batteryPickups.splice(i, 1);
-      playSound(900, 0.2, 'sine', 0.15); showMsg("Batería +5s", "var(--success)");
-    }
-  }
-}
-function showMsg(text, color) {
-  const el = document.getElementById('notification');
-  el.textContent = text; el.style.color = color || 'var(--accent)';
-  el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2000);
-}
+function checkExit() { if (levelCompleted) return; if (player.x > exitZone.x && player.x < exitZone.x + exitZone.w && player.y > exitZone.y && player.y < exitZone.y + exitZone.h) { levelCompleted = true; playSound(500, 0.5, 'sine', 0.2); noLoop(); try { const finalTime = currentTime; if (!Array.isArray(lastTimes)) lastTimes = []; lastTimes.unshift(finalTime); if (lastTimes.length > 5) lastTimes.pop(); try { localStorage.setItem("lastTimes_" + levelIndex, JSON.stringify(lastTimes)); } catch(e){} let isNewRecord = false; if (bestTime === 0 || finalTime < bestTime) { bestTime = finalTime; try { localStorage.setItem("bestTime_" + levelIndex, String(bestTime)); } catch(e){} isNewRecord = true; } let timeText = "Tu tiempo: " + (finalTime / 1000).toFixed(2) + "s"; if (isNewRecord) { timeText += "<br><span style='color:var(--accent);'>🏆 ¡NUEVO RÉCORD!</span>"; } else { timeText += "<br>Récord: " + (bestTime / 1000).toFixed(2) + "s"; } document.getElementById('complete-time').innerHTML = timeText; const btnNext = document.getElementById('btn-next'); if (levelIndex >= LEVELS.length - 1) btnNext.textContent = "MENÚ PRINCIPAL"; else btnNext.textContent = "SIGUIENTE NIVEL"; document.getElementById('btn-prev').style.display = (levelIndex > 0) ? 'block' : 'none'; document.getElementById('level-complete-overlay').classList.add('active'); } catch(e) { console.error("Error en checkExit:", e); document.getElementById('complete-time').innerHTML = "Nivel completado"; document.getElementById('level-complete-overlay').classList.add('active'); } } }
+function checkPickup() { if (!pickup || pickup.collected) return; if (dist(player.x, player.y, pickup.x, pickup.y) < player.r + pickup.r + 4) { pickup.collected = true; upgrades[pickup.upgradeKey] = true; playSound(1300, 0.4, 'sine', 0.22); showMsg("Equipo encontrado: " + pickup.label, "var(--purple)"); updateMissionsUI(); } }
+function checkBatteryPickups() { const lvl = LEVELS[levelIndex]; if(!lvl.batteryPickups) return; for (let i = lvl.batteryPickups.length - 1; i >= 0; i--) { const b = lvl.batteryPickups[i]; if (dist(player.x, player.y, b.x, b.y) < player.r + b.r + 4) { battery = Math.min(MAX_BATTERY, battery + BATTERY_PICKUP_AMOUNT); lvl.batteryPickups.splice(i, 1); playSound(900, 0.2, 'sine', 0.15); showMsg("Batería +5s", "var(--success)"); } } }
+function showMsg(text, color) { const el = document.getElementById('notification'); el.textContent = text; el.style.color = color || 'var(--accent)'; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2000); }
 const SWITCH_HOLD_MS = 1000;
-function updateSwitchHold() {
-  if (!switchObj || switchObj.activated) return;
-  const near = dist(player.x, player.y, switchObj.x, switchObj.y) < switchObj.r + 20;
-  if (near) {
-    switchObj.holdTimer = (switchObj.holdTimer || 0) + deltaTime;
-    if (switchObj.holdTimer >= SWITCH_HOLD_MS) {
-      switchObj.activated = true;
-      playSound(750, 0.25, 'sawtooth', 0.2); showMsg("Rejas abiertas", "var(--success)");
-      updateMissionsUI();
-      if (levelIndex === 0 && lightsOn && !switchObj.blackoutTriggered) {
-        lightsOn = false; switchObj.blackoutTriggered = true;
-        playSound(120, 1.0, 'sawtooth', 0.3); setTimeout(() => playSound(80, 1.5, 'sawtooth', 0.2), 100);
-        showMsg("¡CORTE DE LUZ! Enciende tu linterna (ESPACIO)", "var(--danger)"); brightness.fill(0);
-      }
-    }
-  } else { switchObj.holdTimer = 0; }
-}
-
-function resetRoom(caught) {
-  brightness.fill(0); seenEver.fill(0); lastFullTime.fill(0);
-  const lvl = LEVELS[levelIndex];
-  lightsOn = lvl.lightsOnAtStart; battery = MAX_BATTERY;
-  player.x = lvl.playerStart.x; player.y = lvl.playerStart.y;
-  enemies.forEach((e, i) => { e.x = lvl.enemies[i].x; e.y = lvl.enemies[i].y; e.wpIndex = 0; e.state = "patrol"; });
-  cameras = (lvl.cameras || []).map(c => ({ ...c, angle: c.baseAngle }));
-  stones = []; noiseEvents = []; flashlightOn = false; dimMode = false;
-  levelCompleted = false; 
-  if (switchObj) { switchObj.holdTimer = 0; switchObj.activated = false; switchObj.blackoutTriggered = false; }
-  if (caught) { showMsg("DETECTADO — reiniciando sector", "var(--danger)"); playSound(120, 0.4, 'sawtooth', 0.2); }
-  const canvasElement = document.querySelector('canvas');
-  if (canvasElement) canvasElement.focus();
-  loop();
-}
-
-function keyPressed() {
-  if (keyCode === CONTROL) { sneakMode = !sneakMode; showMsg(sneakMode ? "SIGILO ACTIVADO" : "SIGILO DESACTIVADO", "var(--success)"); }
-  if (keyCode === ESCAPE) { UI.togglePause(); return; }
-  if (paused) return;
-  if (key === ' ') {
-    if (battery > 0) { flashlightOn = !flashlightOn; if (!flashlightOn) dimMode = false; playSound(flashlightOn ? 800 : 400, 0.05, 'square', 0.1); } 
-    else { flashlightOn = false; showMsg("BATERÍA AGOTADA", "var(--danger)"); }
-  }
-  if (key === 'q' || key === 'Q') {
-    if (upgrades.silentLight && flashlightOn) { dimMode = !dimMode; playSound(dimMode ? 500 : 800, 0.05, 'square', 0.1); showMsg(dimMode ? "MODO ATENUADO ACTIVADO" : "MODO NORMAL", "var(--purple)"); }
-  }
-  if (key === 'r' || key === 'R') UI.restartLevel();
-}
-
-function mousePressed() {
-  if (!audioReady || paused || levelCompleted) return;
-  if (gameMouseX >= 0 && gameMouseX <= W && gameMouseY >= 0 && gameMouseY <= H) throwStone(gameMouseX, gameMouseY);
-}
+function updateSwitchHold() { if (!switchObj || switchObj.activated) return; const near = dist(player.x, player.y, switchObj.x, switchObj.y) < switchObj.r + 20; if (near) { switchObj.holdTimer = (switchObj.holdTimer || 0) + deltaTime; if (switchObj.holdTimer >= SWITCH_HOLD_MS) { switchObj.activated = true; playSound(750, 0.25, 'sawtooth', 0.2); showMsg("Rejas abiertas", "var(--success)"); updateMissionsUI(); if (levelIndex === 0 && lightsOn && !switchObj.blackoutTriggered) { lightsOn = false; switchObj.blackoutTriggered = true; playSound(120, 1.0, 'sawtooth', 0.3); setTimeout(() => playSound(80, 1.5, 'sawtooth', 0.2), 100); showMsg("¡CORTE DE LUZ! Enciende tu linterna (ESPACIO)", "var(--danger)"); brightness.fill(0); } } } else { switchObj.holdTimer = 0; } }
+function resetRoom(caught) { brightness.fill(0); seenEver.fill(0); lastFullTime.fill(0); const lvl = LEVELS[levelIndex]; lightsOn = lvl.lightsOnAtStart; battery = MAX_BATTERY; player.x = lvl.playerStart.x; player.y = lvl.playerStart.y; enemies.forEach((e, i) => { e.x = lvl.enemies[i].x; e.y = lvl.enemies[i].y; e.wpIndex = 0; e.state = "patrol"; }); cameras = (lvl.cameras || []).map(c => ({ ...c, angle: c.baseAngle })); stones = []; noiseEvents = []; flashlightOn = false; dimMode = false; levelCompleted = false; if (switchObj) { switchObj.holdTimer = 0; switchObj.activated = false; switchObj.blackoutTriggered = false; } if (caught) { showMsg("DETECTADO — reiniciando sector", "var(--danger)"); playSound(120, 0.4, 'sawtooth', 0.2); } const canvasElement = document.querySelector('canvas'); if (canvasElement) canvasElement.focus(); loop(); }
+function keyPressed() { if (keyCode === CONTROL) { sneakMode = !sneakMode; showMsg(sneakMode ? "SIGILO ACTIVADO" : "SIGILO DESACTIVADO", "var(--success)"); } if (keyCode === ESCAPE) { UI.togglePause(); return; } if (paused) return; if (key === ' ') { if (battery > 0) { flashlightOn = !flashlightOn; if (!flashlightOn) dimMode = false; playSound(flashlightOn ? 800 : 400, 0.05, 'square', 0.1); } else { flashlightOn = false; showMsg("BATERÍA AGOTADA", "var(--danger)"); } } if (key === 'q' || key === 'Q') { if (upgrades.silentLight && flashlightOn) { dimMode = !dimMode; playSound(dimMode ? 500 : 800, 0.05, 'square', 0.1); showMsg(dimMode ? "MODO ATENUADO ACTIVADO" : "MODO NORMAL", "var(--purple)"); } } if (key === 'r' || key === 'R') UI.restartLevel(); }
+function mousePressed() { if (!audioReady || paused || levelCompleted) return; if (gameMouseX >= 0 && gameMouseX <= W && gameMouseY >= 0 && gameMouseY <= H) throwStone(gameMouseX, gameMouseY); }
 
 function touchStarted() {
   if (!audioReady || paused || levelCompleted) return true;
@@ -1335,15 +468,14 @@ function touchStarted() {
     if (target && (target.tagName === 'BUTTON' || target.classList.contains('mobile-btn') || target.classList.contains('panel-toggle-btn') || target.id === 'btn-pause' || target.classList.contains('pause-bar'))) return true;
     
     if (t.x < width / 2 && touchMoveId === null) {
-      touchMoveId = t.id;
-      moveStartX = t.x; moveStartY = t.y;
-      moveCurrentX = t.x; moveCurrentY = t.y;
-    } 
-    else if (t.x >= width / 2 && touchAimId === null) {
-      touchAimId = t.id;
-      aimStartX = t.x; aimStartY = t.y;
-      aimCurrentX = t.x; aimCurrentY = t.y;
-      aimTouchStart = millis();
+      touchMoveId = t.id; moveStartX = t.x; moveStartY = t.y; moveCurrentX = t.x; moveCurrentY = t.y;
+    } else if (t.x >= width / 2) {
+      let dThrow = dist(t.x, t.y, throwBaseX, throwBaseY);
+      if (dThrow < 40 && throwTouchId === null) {
+          throwTouchId = t.id; throwKnobX = t.x; throwKnobY = t.y;
+      } else if (touchAimId === null) {
+          touchAimId = t.id; aimStartX = t.x; aimStartY = t.y; aimCurrentX = t.x; aimCurrentY = t.y; aimTouchStart = millis();
+      }
     }
   }
   return false;
@@ -1353,10 +485,13 @@ function touchMoved() {
   if (!audioReady || paused || levelCompleted) return true;
   for (let i = 0; i < touches.length; i++) {
     let t = touches[i];
-    if (t.id === touchMoveId) {
-      moveCurrentX = t.x; moveCurrentY = t.y;
-    } else if (t.id === touchAimId) {
-      aimCurrentX = t.x; aimCurrentY = t.y;
+    if (t.id === touchMoveId) { moveCurrentX = t.x; moveCurrentY = t.y; } 
+    else if (t.id === touchAimId) { aimCurrentX = t.x; aimCurrentY = t.y; } 
+    else if (t.id === throwTouchId) {
+        let dx = t.x - throwBaseX, dy = t.y - throwBaseY;
+        let mag = Math.sqrt(dx*dx + dy*dy);
+        if (mag > 40) { throwKnobX = throwBaseX + (dx/mag)*40; throwKnobY = throwBaseY + (dy/mag)*40; }
+        else { throwKnobX = t.x; throwKnobY = t.y; }
     }
   }
   return false;
@@ -1366,45 +501,27 @@ function touchEnded() {
   if (!audioReady || paused || levelCompleted) return true;
   let moveExists = touches.some(t => t.id === touchMoveId);
   let aimExists = touches.some(t => t.id === touchAimId);
+  let throwExists = touches.some(t => t.id === throwTouchId);
   
-  if (!moveExists) { touchMoveId = null; }
-  
+  if (!moveExists) touchMoveId = null;
   if (!aimExists) {
-    // Si fue un tap rápido (menos de 250ms), enciende/apaga la luz
-    if (millis() - aimTouchStart < 250) {
-      UI.toggleLight();
-    }
+    if (millis() - aimTouchStart < 250) UI.toggleLight();
     touchAimId = null;
+  }
+  if (!throwExists && throwTouchId !== null) {
+      let dx = throwKnobX - throwBaseX, dy = throwKnobY - throwBaseY;
+      if (Math.sqrt(dx*dx + dy*dy) > 5) {
+          let throwAngle = atan2(dy, dx);
+          let throwTargetX = player.x + cos(throwAngle) * 200;
+          let throwTargetY = player.y + sin(throwAngle) * 200;
+          throwStone(throwTargetX, throwTargetY);
+      }
+      throwKnobX = throwBaseX; throwKnobY = throwBaseY; throwTouchId = null;
   }
   return false;
 }
 
-// ============================================================
-//  IMPLEMENTACIÓN PWA EN UN SOLO ARCHIVO (Data URI Manifest)
-// ============================================================
-window.addEventListener('load', () => {
-  const manifest = {
-    name: "COLISEUM",
-    short_name: "COLISEUM",
-    description: "Investigación en Santa Cruz",
-    start_url: ".",
-    scope: ".",
-    display: "fullscreen",
-    orientation: "landscape",
-    background_color: "#050508",
-    theme_color: "#050508",
-    icons: [
-      {
-        src: PLAYER_SVG_64,
-        sizes: "any",
-        type: "image/svg+xml",
-        purpose: "any maskable"
-      }
-    ]
-  };
-  const manifestURL = "data:application/manifest+json," + encodeURIComponent(JSON.stringify(manifest));
-  document.getElementById('manifest-tag').setAttribute('href', manifestURL);
-});
+window.addEventListener('load', () => { const manifest = { name: "COLISEUM", short_name: "COLISEUM", description: "Investigación en Santa Cruz", start_url: ".", scope: ".", display: "fullscreen", orientation: "landscape", background_color: "#050508", theme_color: "#050508", icons: [ { src: PLAYER_SVG_64, sizes: "any", type: "image/svg+xml", purpose: "any maskable" } ] }; const manifestURL = "data:application/manifest+json," + encodeURIComponent(JSON.stringify(manifest)); document.getElementById('manifest-tag').setAttribute('href', manifestURL); });
 </script>
 </body>
 </html>
