@@ -367,6 +367,12 @@ function loadLevel(idx) {
   enemies = lvl.enemies.map(e => { const t = ENEMY_TYPES[e.type]; return { ...e, r: 8, wpIndex: 0, speed: t.speed, sensitivity: t.sensitivity, alertMult: t.alertMult, searchTime: t.searchTime, color: t.color, state: "patrol", target: null, stateTimer: 0, searchAnchor: null }; }); 
   cameras = (lvl.cameras || []).map(c => ({ ...c, angle: c.baseAngle })); 
   exitZone = lvl.exitZone; player.x = lvl.playerStart.x; player.y = lvl.playerStart.y; stones = []; noiseEvents = []; deathsThisLevel = 0; dimMode = false; 
+  
+  // FORZAR RESETEO DE JOYSTICKS PARA EVITAR BUG DE MOVIMIENTO FANTASMA
+  touchMoveId = null; touchAimId = null; 
+  moveStartX = moveStartY = moveCurrentX = moveCurrentY = 0;
+  aimStartX = aimStartY = aimCurrentX = aimCurrentY = 0;
+  
   UI.showScreen('game-screen'); updateMissionsUI(); showAida(lvl.central); 
   const canvasElement = document.querySelector('canvas'); if (canvasElement) { canvasElement.setAttribute('tabindex', '0'); canvasElement.focus(); } window.focus(); loop(); 
   levelStartTime = millis(); currentTime = 0; levelCompleted = false; 
@@ -429,7 +435,21 @@ function draw() {
 
   push(); translate(width/2 - camX, height/2 - camY); noStroke();
   for (let gy = 0; gy < ROWS; gy++) { for (let gx = 0; gx < COLS; gx++) { const idx = cellIndex(gx, gy); const b = brightness[idx]; if (b <= 0.001 && !lightsOn) continue; const wx = gx * CELL, wy = gy * CELL; if (wx + CELL < camX - width/2 || wx > camX + width/2 || wy + CELL < camY - height/2 || wy > camY + height/2) continue; let isWall = false; for (const w of walls) { if (wx + CELL > w.x && wx < w.x + w.w && wy + CELL > w.y && wy < w.y + w.h) { isWall = true; break; } } if (!isWall && doorWalls && switchObj && !switchObj.activated) { for (const w of doorWalls) { if (wx + CELL > w.x && wx < w.x + w.w && wy + CELL > w.y && wy < w.y + w.h) { isWall = true; break; } } } if (isWall) { if (lightsOn) fill(80, 80, 90); else fill(40, 40, 40, b * 255); rect(wx, wy, CELL, CELL); if (b > 0.2 || lightsOn) { fill(120, 120, 130, lightsOn ? 150 : b * 100); rect(wx, wy, CELL, 3); } } else { if (currentFloorImg) { drawingContext.globalAlpha = lightsOn ? 1 : b; image(currentFloorImg, wx, wy, CELL, CELL, wx, wy, CELL, CELL); drawingContext.globalAlpha = 1; } else { if (lightsOn) fill(30, 30, 40); else fill(20, 25, 35, b * 150); rect(wx, wy, CELL, CELL); } } } }
-  if (flashlightOn && battery > 0 && !lightsOn) { const range = currentLightRange() * (dimMode ? DIM_RANGE_FACTOR : 1); const halfAngle = dimMode ? HALF_ANGLE_DIM : LIGHT_CONE / 2; const flicker = 1 + (sin(frameCount * 0.8) * 0.03) + (random() * 0.04 - 0.02); const flickRange = range * flicker; push(); translate(player.x, player.y); rotate(player.aimAngle); noStroke(); if (dimMode) { fill(187, 102, 255, 25); } else { fill(255, 255, 200, 15); } arc(0, 0, flickRange*2, flickRange*2, -halfAngle, halfAngle, PIE); if (dimMode) { fill(187, 102, 255, 45); } else { fill(255, 255, 220, 30); } arc(0, 0, flickRange*1.5, flickRange*1.5, -halfAngle, halfAngle, PIE); if (dimMode) { fill(220, 180, 255, 60); } else { fill(255, 255, 240, 50); } arc(0, 0, flickRange*0.8, flickRange*0.8, -halfAngle, halfAngle, PIE); if (frameCount % 2 === 0) { for(let i=0; i<3; i++) { let r = random(flickRange); let a = random(-halfAngle, halfAngle); let dustSize = random(1, 2.5); fill(255, 255, 255, random(30, 80)); circle(cos(a)*r, sin(a)*r, dustSize); } } pop(); }
+  
+  // LINTERNA ESTÁTICA (Sin flicker ni polvo)
+  if (flashlightOn && battery > 0 && !lightsOn) {
+    const range = currentLightRange() * (dimMode ? DIM_RANGE_FACTOR : 1);
+    const halfAngle = dimMode ? HALF_ANGLE_DIM : LIGHT_CONE / 2;
+    push(); translate(player.x, player.y); rotate(player.aimAngle); noStroke();
+    if (dimMode) { fill(187, 102, 255, 25); } else { fill(255, 255, 200, 15); }
+    arc(0, 0, range*2, range*2, -halfAngle, halfAngle, PIE);
+    if (dimMode) { fill(187, 102, 255, 45); } else { fill(255, 255, 220, 30); }
+    arc(0, 0, range*1.5, range*1.5, -halfAngle, halfAngle, PIE);
+    if (dimMode) { fill(220, 180, 255, 60); } else { fill(255, 255, 240, 50); }
+    arc(0, 0, range*0.8, range*0.8, -halfAngle, halfAngle, PIE);
+    pop();
+  }
+
   const lvl = LEVELS[levelIndex];
   if(lvl.batteryPickups) { for (const b of lvl.batteryPickups) { if (brightnessAt(b.x, b.y) > 0.05 || lightsOn) { fill(255, 255, 0, 80); circle(b.x, b.y, 14); fill(255, 255, 0, 200); rectMode(CENTER); rect(b.x, b.y, 10, 6); rectMode(CORNER); } } }
   if (pickup && !pickup.collected && brightnessAt(pickup.x, pickup.y) > 0.05) { fill(187, 102, 255, 80); circle(pickup.x, pickup.y, 18); fill(187, 102, 255, 200); push(); translate(pickup.x, pickup.y); rotate(PI/4); rectMode(CENTER); rect(0, 0, 12, 12); pop(); rectMode(CORNER); }
@@ -503,4 +523,3 @@ window.addEventListener('load', () => { const manifest = { name: "COLISEUM", sho
 </script>
 </body>
 </html>
-
