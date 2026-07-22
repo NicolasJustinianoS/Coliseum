@@ -109,9 +109,11 @@ canvas{display:block;touch-action:none}
 #notification.show{opacity:1}
 
 /* Controles Móviles */
-#mobile-controls{position:absolute;bottom:max(2rem, env(safe-area-inset-bottom));right:max(7rem, calc(env(safe-area-inset-right) + 5rem));width:65px;height:65px;z-index:15;display:none;pointer-events:none}
+#mobile-controls{position:absolute;bottom:max(2rem, env(safe-area-inset-bottom));right:max(2rem, env(safe-area-inset-right));width:140px;height:65px;z-index:15;display:none;pointer-events:none}
 .mobile-btn{position:absolute;width:65px;height:65px;border-radius:50%;background:rgba(8,12,20,0.8);border:2px solid var(--border);color:var(--accent);font-family:'Orbitron';font-size:0.65rem;font-weight:700;pointer-events:auto;cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.1;backdrop-filter:blur(4px);-webkit-tap-highlight-color: transparent}
 .mobile-btn:active{background:rgba(0,255,229,0.3);transform:scale(0.95)}
+#btn-sneak{bottom:0;left:0}
+#btn-stone{bottom:0;right:0}
 
 /* Botón de Pausa Minimalista (Izquierda) */
 #btn-pause{position:absolute;top:max(3.5rem, calc(env(safe-area-inset-top) + 2rem));left:max(1rem, env(safe-area-inset-left));width:40px;height:40px;background:rgba(8,12,20,0.8);border:1px solid var(--border);border-radius:8px;display:none;z-index:11;cursor:pointer;pointer-events:auto;align-items:center;justify-content:center;gap:5px;-webkit-tap-highlight-color: transparent}
@@ -141,7 +143,6 @@ canvas{display:block;touch-action:none}
 
 /* BOTONES DESPLEGABLES MÓVILES */
 .panel-toggle-btn{position:absolute;top:max(3.5rem, calc(env(safe-area-inset-top) + 2rem));background:rgba(8,12,20,0.8);border:1px solid var(--border);color:var(--accent);padding:0.4rem 0.8rem;font-family:'Orbitron';font-size:0.7rem;z-index:11;display:none;cursor:pointer;pointer-events:auto;-webkit-tap-highlight-color: transparent}
-/* OBJ ahora está a la derecha de Pausa */
 #btn-toggle-missions{left:max(4rem, calc(env(safe-area-inset-left) + 3rem))}
 #btn-toggle-stats{right:1rem}
 @media (hover: none) and (pointer: coarse){ 
@@ -204,14 +205,13 @@ canvas{display:block;touch-action:none}
         <div class="instr-item"><span class="instr-key">Parado 1s</span><span class="instr-desc">Mantenete quieto sobre un panel o interruptor naranja para activarlo y abrir las rejas correspondientes.</span></div>
         <div class="instr-item"><span class="instr-key">R</span><span class="instr-desc">Reiniciar la sala actual. Útil si te encuentras atrapado o quieres intentar una estrategia distinta.</span></div>
         <div class="instr-item"><span class="instr-key">ESC</span><span class="instr-desc">Pausar la partida. Accede a las opciones de continuar, reiniciar o salir al menú principal.</span></div>
-        <div class="instr-item"><span class="instr-key">MÓVIL</span><span class="instr-desc">Joystick Izq: Mover. Joystick Der: Apuntar luz (Tap rápido para encender/apagar). Botón Estático Naranja: Apuntar y lanzar ladrillos.</span></div>
+        <div class="instr-item"><span class="instr-key">MÓVIL</span><span class="instr-desc">Joystick Izq: Mover. Joystick Der: Apuntar linterna/ladrillos (Tap rápido para encender/apagar luz). Botones: Pausa, Sigilo y Lanzar Piedra.</span></div>
     </div>
 </div>
 
 <div id="game-screen" class="screen">
     <div id="game-canvas-wrapper"></div>
     <div id="hud">
-        <!-- Orden cambiado: Pausa primero, OBJ después -->
         <button id="btn-pause" ontouchstart="event.preventDefault(); event.stopPropagation(); UI.togglePause();" onclick="event.stopPropagation(); UI.togglePause();">
             <div class="pause-bar"></div>
             <div class="pause-bar"></div>
@@ -247,6 +247,7 @@ canvas{display:block;touch-action:none}
 
     <div id="mobile-controls">
         <button class="mobile-btn" id="btn-sneak" ontouchstart="event.preventDefault(); event.stopPropagation(); UI.toggleSneak();" onclick="event.stopPropagation(); UI.toggleSneak();">SIGILO</button>
+        <button class="mobile-btn" id="btn-stone" ontouchstart="event.preventDefault(); event.stopPropagation(); UI.throwStoneButton();" onclick="event.stopPropagation(); UI.throwStoneButton();">PIEDRA</button>
     </div>
     
     <div id="pause-overlay" class="overlay">
@@ -290,6 +291,9 @@ const CELL = 20, COLS = 54, ROWS = 36, W = COLS * CELL, H = ROWS * CELL;
 const MEMORY_FLOOR = 0.05, LIGHT_RANGE = 120, LIGHT_CONE = Math.PI / 3, HALF_ANGLE_DIM = Math.PI / 6, DIM_RANGE_FACTOR = 0.55;
 const BASE_SPEED_WALK = 1.7, BASE_SPEED_RUN = 3.0, BASE_STONE_CAP = 1, MAX_BATTERY = 20000, BATTERY_PICKUP_AMOUNT = 5000; 
 
+// Detectar si es un dispositivo táctil para evitar el bug de reseteo de ángulo
+const isTouchDevice = (navigator.maxTouchPoints > 0 || 'ontouchstart' in window);
+
 let upgrades = { extendedRadius: false, silentLight: false, directional: false };
 let playerStats = { lightChoices: 0, speedChoices: 0, stoneChoices: 0 };
 function currentLightRange() { return LIGHT_RANGE + playerStats.lightChoices * 30 + (upgrades.extendedRadius ? 40 : 0); }
@@ -308,7 +312,6 @@ let levelCompleted = false;
 // Controles táctiles
 let touchMoveId = null, moveStartX = 0, moveStartY = 0, moveCurrentX = 0, moveCurrentY = 0;
 let touchAimId = null, aimTouchStart = 0, aimStartX = 0, aimStartY = 0, aimCurrentX = 0, aimCurrentY = 0;
-let touchThrowId = null, throwBaseX = 0, throwBaseY = 0, throwKnobX = 0, throwKnobY = 0, throwStartTouchX = 0, throwStartTouchY = 0;
 
 // VARIABLES DE CÁMARA
 let camX = 0, camY = 0, gameMouseX = 0, gameMouseY = 0;
@@ -342,14 +345,14 @@ const UI = {
     togglePause() { if (!audioReady) return; paused = !paused; document.getElementById('pause-overlay').classList.toggle('active', paused); if (paused) noLoop(); else loop(); },
     toggleLight() { if (paused || levelCompleted) return; if (battery > 0) { flashlightOn = !flashlightOn; if (!flashlightOn) dimMode = false; playSound(flashlightOn ? 800 : 400, 0.05, 'square', 0.1); } else { flashlightOn = false; showMsg("BATERÍA AGOTADA", "var(--danger)"); } },
     toggleSneak() { if (paused || levelCompleted) return; sneakMode = !sneakMode; showMsg(sneakMode ? "SIGILO ACTIVADO" : "SIGILO DESACTIVADO", "var(--success)"); },
+    throwStoneButton() { if (paused || levelCompleted) return; let throwX = player.x + cos(player.aimAngle) * 100; let throwY = player.y + sin(player.aimAngle) * 100; throwStone(throwX, throwY); },
     togglePanel(id) { const panel = document.getElementById(id); panel.style.display = (panel.style.display === 'block') ? 'none' : 'block'; },
     initLevelSelect(){ const c=document.getElementById('level-cards'); c.innerHTML=''; LEVELS.forEach((lvl,i)=>{ const card=document.createElement('div'); card.className='level-card'; card.innerHTML=`<div class="lvl-num">${i}</div><div class="lvl-name">${lvl.name.split('—')[1]}</div><div class="lvl-desc">${lvl.central[0]}</div>`; card.onclick=()=>{ ensureAudio(); this.startGame(i); }; c.appendChild(card); }); }
 };
 
 function preload() { playerImg = loadImage(PLAYER_SVG_64); }
-function setup() { const c = createCanvas(windowWidth, windowHeight); c.parent('game-canvas-wrapper'); pixelDensity(1); brightness = new Float32Array(COLS * ROWS); seenEver = new Uint8Array(COLS * ROWS); lastFullTime = new Float32Array(COLS * ROWS); UI.initLevelSelect(); noLoop(); updateThrowBase(); }
-function windowResized() { resizeCanvas(windowWidth, windowHeight); updateThrowBase(); }
-function updateThrowBase() { throwBaseX = width - 70; throwBaseY = height - 70; throwKnobX = throwBaseX; throwKnobY = throwBaseY; }
+function setup() { const c = createCanvas(windowWidth, windowHeight); c.parent('game-canvas-wrapper'); pixelDensity(1); brightness = new Float32Array(COLS * ROWS); seenEver = new Uint8Array(COLS * ROWS); lastFullTime = new Float32Array(COLS * ROWS); UI.initLevelSelect(); noLoop(); }
+function windowResized() { resizeCanvas(windowWidth, windowHeight); }
 
 function ensureAudio() { if (!audioCtx) initSound(); audioReady = true; }
 function initSound() { const AC = window.AudioContext || window.webkitAudioContext; audioCtx = new AC(); if (audioCtx.state === "suspended") audioCtx.resume(); }
@@ -411,11 +414,12 @@ function draw() {
   camX = player.x; camY = player.y; if (width < W) camX = constrain(camX, width/2, W - width/2); else camX = W/2; if (height < H) camY = constrain(camY, height/2, H - height/2); else camY = H/2;
   gameMouseX = mouseX - width/2 + camX; gameMouseY = mouseY - height/2 + camY;
 
-  // LÓGICA JOYSTICK DERECHO (APUNTAR LUZ)
+  // LÓGICA DE APUNTADO (Arreglado bug de reseteo)
   if (touchAimId !== null) {
       let dxAim = aimCurrentX - aimStartX, dyAim = aimCurrentY - aimStartY;
       if (Math.sqrt(dxAim*dxAim + dyAim*dyAim) > 5) player.aimAngle = atan2(dyAim, dxAim);
-  } else if (touches.length === 0) {
+  } else if (!isTouchDevice) {
+      // Si NO es móvil, el ratón controla la dirección. Si ES móvil, se queda quieto.
       player.aimAngle = atan2(gameMouseY - player.y, gameMouseX - player.x);
   }
 
@@ -441,11 +445,6 @@ function draw() {
   // --- DIBUJAR JOYSTICKS (Pantalla fija) ---
   if (touchMoveId !== null) { noFill(); stroke(0, 255, 229, 100); strokeWeight(3); circle(moveStartX, moveStartY, 100); fill(0, 255, 229, 150); noStroke(); circle(moveCurrentX, moveCurrentY, 40); }
   if (touchAimId !== null) { noFill(); stroke(255, 255, 200, 100); strokeWeight(3); circle(aimStartX, aimStartY, 100); fill(255, 255, 200, 150); noStroke(); circle(aimCurrentX, aimCurrentY, 40); }
-  
-  // DIBUJAR JOYSTICK DE PIEDRA (Estático)
-  noFill(); stroke(255, 150, 0, 100); strokeWeight(3); circle(throwBaseX, throwBaseY, 80);
-  fill(255, 150, 0, 150); noStroke(); circle(throwKnobX, throwKnobY, 40);
-  fill(255, 255, 255); textSize(10); textAlign(CENTER, CENTER); textStyle(BOLD); text("PIEDRA", throwBaseX, throwBaseY); textStyle(NORMAL);
 
   checkPickup(); checkBatteryPickups(); updateSwitchHold(); updateHUD(); checkExit();
 }
@@ -469,13 +468,8 @@ function touchStarted() {
     
     if (t.x < width / 2 && touchMoveId === null) {
       touchMoveId = t.id; moveStartX = t.x; moveStartY = t.y; moveCurrentX = t.x; moveCurrentY = t.y;
-    } else if (t.x >= width / 2) {
-      // Zona de Ladrillo (Esquina inferior derecha amplia)
-      if (t.x > width - 150 && t.y > height - 150 && throwTouchId === null) {
-          throwTouchId = t.id; throwStartTouchX = t.x; throwStartTouchY = t.y; throwKnobX = throwBaseX; throwKnobY = throwBaseY;
-      } else if (touchAimId === null) {
-          touchAimId = t.id; aimStartX = t.x; aimStartY = t.y; aimCurrentX = t.x; aimCurrentY = t.y; aimTouchStart = millis();
-      }
+    } else if (t.x >= width / 2 && touchAimId === null) {
+      touchAimId = t.id; aimStartX = t.x; aimStartY = t.y; aimCurrentX = t.x; aimCurrentY = t.y; aimTouchStart = millis();
     }
   }
   return false;
@@ -486,49 +480,20 @@ function touchMoved() {
   for (let i = 0; i < touches.length; i++) {
     let t = touches[i];
     if (t.id === touchMoveId) { moveCurrentX = t.x; moveCurrentY = t.y; } 
-    else if (t.id === touchAimId) { aimCurrentX = t.x; aimCurrentY = t.y; } 
-    else if (t.id === throwTouchId) {
-        // Arrastre relativo desde donde se tocó inicialmente
-        let dx = t.x - throwStartTouchX;
-        let dy = t.y - throwStartTouchY;
-        let mag = Math.sqrt(dx*dx + dy*dy);
-        if (mag > 40) { throwKnobX = throwBaseX + (dx/mag)*40; throwKnobY = throwBaseY + (dy/mag)*40; }
-        else { throwKnobX = throwBaseX + dx; throwKnobY = throwBaseY + dy; }
-    }
+    else if (t.id === touchAimId) { aimCurrentX = t.x; aimCurrentY = t.y; }
   }
   return false;
 }
 
 function touchEnded() {
   if (!audioReady || paused || levelCompleted) return true;
-  
-  // Obtener los IDs de los toques que siguen activos
   const activeIds = touches.map(t => t.id);
+
+  if (touchMoveId !== null && !activeIds.includes(touchMoveId)) touchMoveId = null;
   
-  // Limpiar Move
-  if (touchMoveId !== null && !activeIds.includes(touchMoveId)) {
-    touchMoveId = null;
-  }
-  
-  // Limpiar Aim
   if (touchAimId !== null && !activeIds.includes(touchAimId)) {
-    if (millis() - aimTouchStart < 250) {
-      UI.toggleLight();
-    }
+    if (millis() - aimTouchStart < 250) UI.toggleLight();
     touchAimId = null;
-  }
-  
-  // Limpiar Throw (y lanzar piedra)
-  if (throwTouchId !== null && !activeIds.includes(throwTouchId)) {
-    let dx = throwKnobX - throwBaseX, dy = throwKnobY - throwBaseY;
-    if (Math.sqrt(dx*dx + dy*dy) > 5) {
-      let throwAngle = atan2(dy, dx);
-      let throwTargetX = player.x + cos(throwAngle) * 200;
-      let throwTargetY = player.y + sin(throwAngle) * 200;
-      throwStone(throwTargetX, throwTargetY);
-    }
-    throwKnobX = throwBaseX; throwKnobY = throwBaseY; 
-    throwTouchId = null;
   }
   
   return false;
