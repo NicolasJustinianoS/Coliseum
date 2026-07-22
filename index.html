@@ -86,13 +86,15 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
 
 #game-screen{padding:0;justify-content:center;align-items:center;background:var(--bg);overflow:hidden}
 #game-canvas-wrapper{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
-canvas{display:block;max-width:100%;max-height:100%;touch-action:none}
+canvas{display:block;max-width:100%;max-height:100%;width:auto !important;height:auto !important;object-fit:contain;touch-action:none}
 #hud{position:absolute;inset:0;pointer-events:none;z-index:10}
-#missions-panel{position:absolute;top:1rem;left:1rem;background:var(--panel);border:1px solid var(--border);padding:1rem 1.2rem;min-width:260px;max-width:300px}
+
+#missions-panel{position:absolute;top:1rem;left:1rem;background:var(--panel);border:1px solid var(--border);padding:1rem 1.2rem;min-width:260px;max-width:300px;transition:transform 0.3s ease, opacity 0.3s ease}
 .mission{display:flex;align-items:flex-start;gap:0.5rem;font-size:0.9rem;margin-bottom:0.4rem}
 .mission.done{color:var(--success);text-decoration:line-through;opacity:0.7}
 .mission.optional{color:var(--purple)}
-#stats-panel{position:absolute;top:1rem;right:1rem;background:var(--panel);border:1px solid var(--border);padding:1rem 1.2rem;min-width:180px}
+
+#stats-panel{position:absolute;top:1rem;right:1rem;background:var(--panel);border:1px solid var(--border);padding:1rem 1.2rem;min-width:180px;transition:transform 0.3s ease, opacity 0.3s ease}
 .stat-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;font-size:0.9rem}
 .stat-value{font-family:'Orbitron';color:var(--accent);font-weight:700}
 .battery-bar{width:80px;height:8px;background:rgba(255,170,0,0.15);border-radius:4px;overflow:hidden;margin-top:4px}
@@ -127,6 +129,14 @@ canvas{display:block;max-width:100%;max-height:100%;touch-action:none}
 @keyframes rotateAnim{0%,100%{transform:rotate(0deg)}50%{transform:rotate(90deg)}}
 @media screen and (orientation:portrait){ #rotate-overlay{display:flex} }
 
+/* BOTONES DESPLEGABLES MÓVILES */
+.panel-toggle-btn{position:absolute;top:1rem;background:rgba(8,12,20,0.8);border:1px solid var(--border);color:var(--accent);padding:0.4rem 0.8rem;font-family:'Orbitron';font-size:0.7rem;z-index:11;display:none;cursor:pointer;pointer-events:auto;-webkit-tap-highlight-color: transparent}
+#btn-toggle-missions{left:1rem}
+#btn-toggle-stats{right:1rem}
+@media (hover: none) and (pointer: coarse){ .panel-toggle-btn{display:block} }
+
+@media screen and (orientation:portrait){ .panel-toggle-btn{display:none !important} }
+
 /* RESPONSIVE PARA PANTALLAS HORIENTALES DE MÓVIL */
 @media screen and (orientation:landscape) and (max-height: 500px) {
     .title-block{margin-bottom:1.5rem}
@@ -136,6 +146,10 @@ canvas{display:block;max-width:100%;max-height:100%;touch-action:none}
     .btn{padding:0.6rem 2rem;font-size:1rem}
     .instructions-content{padding:1.5rem;max-height:90vh;overflow-y:auto}
     .level-cards{margin:1rem 0}
+    
+    /* En móvil, los paneles empiezan escondidos por defecto para no tapar el mapa */
+    #missions-panel.hidden-mobile { transform: translateX(-110%); opacity: 0; pointer-events: none; }
+    #stats-panel.hidden-mobile { transform: translateX(110%); opacity: 0; pointer-events: none; }
 }
 </style>
 </head>
@@ -189,11 +203,16 @@ canvas{display:block;max-width:100%;max-height:100%;touch-action:none}
 <div id="game-screen" class="screen">
     <div id="game-canvas-wrapper"></div>
     <div id="hud">
-        <div id="missions-panel">
+        
+        <!-- Botones desplegables para móvil -->
+        <button id="btn-toggle-missions" class="panel-toggle-btn" onclick="UI.togglePanel('missions-panel')">☰ OBJ</button>
+        <button id="btn-toggle-stats" class="panel-toggle-btn" onclick="UI.togglePanel('stats-panel')">☰ STAT</button>
+
+        <div id="missions-panel" class="hidden-mobile">
             <h3 style="font-family:'Orbitron';font-size:0.75rem;letter-spacing:0.2em;color:var(--accent);margin-bottom:0.6rem">OBJETIVOS</h3>
             <div id="mission-list"></div>
         </div>
-        <div id="stats-panel">
+        <div id="stats-panel" class="hidden-mobile">
             <div class="stat-row"><span>Sector</span><span class="stat-value" id="stat-level">1</span></div>
             <div class="stat-row"><span>Ladrillos</span><span class="stat-value" id="stat-stones">1</span></div>
             <div class="stat-row"><span>Tiempo</span><span class="stat-value" id="stat-time">0.0s</span></div>
@@ -216,9 +235,10 @@ canvas{display:block;max-width:100%;max-height:100%;touch-action:none}
     </div>
 
     <div id="mobile-controls">
-        <button class="mobile-btn" id="btn-pause" onclick="UI.togglePause(); event.preventDefault();">PAUSA</button>
-        <button class="mobile-btn" id="btn-sneak" onclick="UI.toggleSneak(); event.preventDefault();">SIGILO</button>
-        <button class="mobile-btn" id="btn-light" onclick="UI.toggleLight(); event.preventDefault();">LUZ</button>
+        <!-- Se añadió event.preventDefault() para arreglar el toque en iOS -->
+        <button class="mobile-btn" id="btn-pause" ontouchstart="event.preventDefault(); event.stopPropagation(); UI.togglePause();" onclick="event.stopPropagation(); UI.togglePause();">PAUSA</button>
+        <button class="mobile-btn" id="btn-sneak" ontouchstart="event.preventDefault(); event.stopPropagation(); UI.toggleSneak();" onclick="event.stopPropagation(); UI.toggleSneak();">SIGILO</button>
+        <button class="mobile-btn" id="btn-light" ontouchstart="event.preventDefault(); event.stopPropagation(); UI.toggleLight();" onclick="event.stopPropagation(); UI.toggleLight();">LUZ</button>
     </div>
     
     <div id="pause-overlay" class="overlay">
@@ -579,6 +599,10 @@ const UI = {
         if (paused || levelCompleted) return;
         sneakMode = !sneakMode;
         showMsg(sneakMode ? "SIGILO ACTIVADO" : "SIGILO DESACTIVADO", "var(--success)");
+    },
+    togglePanel(id) {
+        const panel = document.getElementById(id);
+        panel.classList.toggle('hidden-mobile');
     },
     initLevelSelect(){
         const c=document.getElementById('level-cards'); c.innerHTML='';
@@ -1171,7 +1195,7 @@ function checkPickup() {
 function checkBatteryPickups() {
   const lvl = LEVELS[levelIndex];
   if(!lvl.batteryPickups) return;
-  for (let i = lvl.batteryPickups.length - 1; i >= 0; i--) {
+  for (let i = lvl.batteryPickups.length - 1; i >= 0; i++) {
     const b = lvl.batteryPickups[i];
     if (dist(player.x, player.y, b.x, b.y) < player.r + b.r + 4) {
       battery = Math.min(MAX_BATTERY, battery + BATTERY_PICKUP_AMOUNT);
@@ -1239,15 +1263,11 @@ function mousePressed() {
   if (mouseX >= 0 && mouseX <= W && mouseY >= 0 && mouseY <= H) throwStone(mouseX, mouseY);
 }
 
-// EVENTOS TÁCTILES (Corregidos para iOS)
 function touchStarted() {
-  // Si estamos en el menú o pausa, dejamos que el navegador haga clic en los botones nativos
   if (!audioReady || paused || levelCompleted) return true;
-  
   for (let i = 0; i < touches.length; i++) {
     let t = touches[i];
     let target = document.elementFromPoint(t.x, t.y);
-    // Si el toque fue en un botón del DOM, no procesamos lógica de juego
     if (target && (target.tagName === 'BUTTON' || target.classList.contains('mobile-btn'))) return true;
     
     if (t.x < width / 2 && touchMoveId === null) {
