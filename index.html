@@ -108,17 +108,22 @@ canvas{display:block;touch-action:none}
 #notification{position:absolute;bottom:5rem;left:50%;transform:translateX(-50%);font-size:1.4rem;color:var(--accent);opacity:0;transition:opacity 0.3s;text-align:center;text-shadow:0 0 10px rgba(0,0,0,0.8)}
 #notification.show{opacity:1}
 
-/* Ajuste seguro para iPhones (notch y barra inferior) */
-#mobile-controls{position:absolute;bottom:max(2rem, env(safe-area-inset-bottom));right:max(2rem, env(safe-area-inset-right));width:180px;height:140px;z-index:15;display:none;pointer-events:none}
+/* Controles Móviles (Derecha) */
+#mobile-controls{position:absolute;bottom:max(2rem, env(safe-area-inset-bottom));right:max(1.5rem, env(safe-area-inset-right));width:140px;height:65px;z-index:15;display:none;pointer-events:none}
 .mobile-btn{position:absolute;width:65px;height:65px;border-radius:50%;background:rgba(8,12,20,0.8);border:2px solid var(--border);color:var(--accent);font-family:'Orbitron';font-size:0.65rem;font-weight:700;pointer-events:auto;cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.1;backdrop-filter:blur(4px);-webkit-tap-highlight-color: transparent}
 .mobile-btn:active{background:rgba(0,255,229,0.3);transform:scale(0.95)}
+#btn-sneak{bottom:0;left:0}
+#btn-stone{bottom:0;right:0}
 
-/* Layout Triangular */
-#btn-pause{top:0;right:55px}
-#btn-sneak{bottom:0;left:10px}
-#btn-stone{bottom:0;right:10px}
+/* Botón de Pausa Minimalista (Izquierda) */
+#btn-pause{position:absolute;top:max(3.5rem, calc(env(safe-area-inset-top) + 2rem));left:max(5rem, calc(env(safe-area-inset-left) + 4rem));width:40px;height:40px;background:rgba(8,12,20,0.8);border:1px solid var(--border);border-radius:8px;display:none;z-index:11;cursor:pointer;pointer-events:auto;align-items:center;justify-content:center;gap:5px;-webkit-tap-highlight-color: transparent}
+#btn-pause:active{background:rgba(0,255,229,0.3);transform:scale(0.95)}
+.pause-bar{width:4px;height:16px;background-color:var(--accent);border-radius:1px}
 
-@media (hover: none) and (pointer: coarse){ #mobile-controls{display:block} }
+@media (hover: none) and (pointer: coarse){ 
+    #mobile-controls{display:block} 
+    #btn-pause{display:flex}
+}
 
 .overlay{position:absolute;inset:0;background:rgba(5,5,8,0.85);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:20;backdrop-filter:blur(4px)}
 .overlay.active{display:flex}
@@ -210,9 +215,14 @@ canvas{display:block;touch-action:none}
     <div id="game-canvas-wrapper"></div>
     <div id="hud">
         
-        <!-- Botones desplegables para móvil -->
+        <!-- Botones de Pausa y Desplegables -->
         <button id="btn-toggle-missions" class="panel-toggle-btn" ontouchstart="event.stopPropagation(); UI.togglePanel('missions-panel');" onclick="event.stopPropagation(); UI.togglePanel('missions-panel');">☰ OBJ</button>
         <button id="btn-toggle-stats" class="panel-toggle-btn" ontouchstart="event.stopPropagation(); UI.togglePanel('stats-panel');" onclick="event.stopPropagation(); UI.togglePanel('stats-panel');">☰ STAT</button>
+        
+        <button id="btn-pause" ontouchstart="event.preventDefault(); event.stopPropagation(); UI.togglePause();" onclick="event.stopPropagation(); UI.togglePause();">
+            <div class="pause-bar"></div>
+            <div class="pause-bar"></div>
+        </button>
 
         <div id="missions-panel">
             <h3 style="font-family:'Orbitron';font-size:0.75rem;letter-spacing:0.2em;color:var(--accent);margin-bottom:0.6rem">OBJETIVOS</h3>
@@ -240,8 +250,8 @@ canvas{display:block;touch-action:none}
         <div id="notification"></div>
     </div>
 
+    <!-- Botones de Acción Móviles (Inferior Derecha) -->
     <div id="mobile-controls">
-        <button class="mobile-btn" id="btn-pause" ontouchstart="event.preventDefault(); event.stopPropagation(); UI.togglePause();" onclick="event.stopPropagation(); UI.togglePause();">PAUSA</button>
         <button class="mobile-btn" id="btn-sneak" ontouchstart="event.preventDefault(); event.stopPropagation(); UI.toggleSneak();" onclick="event.stopPropagation(); UI.toggleSneak();">SIGILO</button>
         <button class="mobile-btn" id="btn-stone" ontouchstart="event.preventDefault(); event.stopPropagation(); UI.throwStoneButton();" onclick="event.stopPropagation(); UI.throwStoneButton();">PIEDRA</button>
     </div>
@@ -1322,7 +1332,7 @@ function touchStarted() {
   for (let i = 0; i < touches.length; i++) {
     let t = touches[i];
     let target = document.elementFromPoint(t.x, t.y);
-    if (target && (target.tagName === 'BUTTON' || target.classList.contains('mobile-btn') || target.classList.contains('panel-toggle-btn'))) return true;
+    if (target && (target.tagName === 'BUTTON' || target.classList.contains('mobile-btn') || target.classList.contains('panel-toggle-btn') || target.id === 'btn-pause' || target.classList.contains('pause-bar'))) return true;
     
     if (t.x < width / 2 && touchMoveId === null) {
       touchMoveId = t.id;
