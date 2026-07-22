@@ -147,7 +147,8 @@ canvas{display:block;touch-action:none}
 #btn-toggle-stats{right:1rem}
 @media (hover: none) and (pointer: coarse){ 
     .panel-toggle-btn{display:block} 
-    #missions-panel, #stats-panel { display: none; }
+    /* En móvil, los paneles comienzan ocultos y se abren DEBAJO de los botones (a 6.5rem del top) para no taparlos */
+    #missions-panel, #stats-panel { display: none; top: max(6.5rem, calc(env(safe-area-inset-top) + 4.5rem)) !important; }
 }
 
 @media screen and (orientation:portrait){ .panel-toggle-btn{display:none !important} }
