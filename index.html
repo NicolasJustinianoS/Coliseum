@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>COLISEUM</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -25,7 +25,7 @@
 :root{
 --bg:#050508;--fg:#e0e0e0;--accent:#00ffe5;--accent-dim:#008b7e;
 --danger:#ff3355;--warn:#ffaa00;--success:#33ff77;--purple:#bb66ff;
---panel:rgba(8,12,20,0.92);--border:rgba(0,255,229,0.25);
+--panel:rgba(8,12,20,0.85);--border:rgba(0,255,229,0.25);
 }
 html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:'Rajdhani',sans-serif;color:var(--fg);user-select:none;cursor:crosshair}
 #app{width:100vw;height:100vh;position:relative;overflow:hidden}
@@ -86,15 +86,15 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
 
 #game-screen{padding:0;justify-content:center;align-items:center;background:var(--bg);overflow:hidden}
 #game-canvas-wrapper{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
-canvas{display:block;max-width:100%;max-height:100%;width:auto !important;height:auto !important;object-fit:contain;touch-action:none}
+canvas{display:block;touch-action:none}
 #hud{position:absolute;inset:0;pointer-events:none;z-index:10}
 
-#missions-panel{position:absolute;top:1rem;left:1rem;background:var(--panel);border:1px solid var(--border);padding:1rem 1.2rem;min-width:260px;max-width:300px;transition:transform 0.3s ease, opacity 0.3s ease}
+#missions-panel{position:absolute;top:max(1rem, env(safe-area-inset-top));left:1rem;background:var(--panel);border:1px solid var(--border);padding:1rem 1.2rem;min-width:260px;max-width:300px;transition:transform 0.3s ease, opacity 0.3s ease}
 .mission{display:flex;align-items:flex-start;gap:0.5rem;font-size:0.9rem;margin-bottom:0.4rem}
 .mission.done{color:var(--success);text-decoration:line-through;opacity:0.7}
 .mission.optional{color:var(--purple)}
 
-#stats-panel{position:absolute;top:1rem;right:1rem;background:var(--panel);border:1px solid var(--border);padding:1rem 1.2rem;min-width:180px;transition:transform 0.3s ease, opacity 0.3s ease}
+#stats-panel{position:absolute;top:max(1rem, env(safe-area-inset-top));right:1rem;background:var(--panel);border:1px solid var(--border);padding:1rem 1.2rem;min-width:180px;transition:transform 0.3s ease, opacity 0.3s ease}
 .stat-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;font-size:0.9rem}
 .stat-value{font-family:'Orbitron';color:var(--accent);font-weight:700}
 .battery-bar{width:80px;height:8px;background:rgba(255,170,0,0.15);border-radius:4px;overflow:hidden;margin-top:4px}
@@ -108,8 +108,9 @@ canvas{display:block;max-width:100%;max-height:100%;width:auto !important;height
 #notification{position:absolute;bottom:5rem;left:50%;transform:translateX(-50%);font-size:1.4rem;color:var(--accent);opacity:0;transition:opacity 0.3s;text-align:center;text-shadow:0 0 10px rgba(0,0,0,0.8)}
 #notification.show{opacity:1}
 
-#mobile-controls{position:absolute;bottom:1.5rem;right:1.5rem;z-index:15;display:none;flex-direction:column;gap:1rem;align-items:flex-end;pointer-events:none}
-.mobile-btn{width:60px;height:60px;border-radius:50%;background:rgba(8,12,20,0.8);border:2px solid var(--border);color:var(--accent);font-family:'Orbitron';font-size:0.7rem;font-weight:700;pointer-events:auto;cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.1;backdrop-filter:blur(4px);-webkit-tap-highlight-color: transparent}
+/* Ajuste seguro para iPhones (notch y barra inferior) */
+#mobile-controls{position:absolute;bottom:max(1.5rem, env(safe-area-inset-bottom));right:max(1.5rem, env(safe-area-inset-right));z-index:15;display:none;flex-direction:column;gap:1rem;align-items:flex-end;pointer-events:none}
+.mobile-btn{width:65px;height:65px;border-radius:50%;background:rgba(8,12,20,0.8);border:2px solid var(--border);color:var(--accent);font-family:'Orbitron';font-size:0.7rem;font-weight:700;pointer-events:auto;cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.1;backdrop-filter:blur(4px);-webkit-tap-highlight-color: transparent}
 .mobile-btn:active{background:rgba(0,255,229,0.3);transform:scale(0.95)}
 @media (hover: none) and (pointer: coarse){ #mobile-controls{display:flex} }
 
@@ -130,10 +131,13 @@ canvas{display:block;max-width:100%;max-height:100%;width:auto !important;height
 @media screen and (orientation:portrait){ #rotate-overlay{display:flex} }
 
 /* BOTONES DESPLEGABLES MÓVILES */
-.panel-toggle-btn{position:absolute;top:1rem;background:rgba(8,12,20,0.8);border:1px solid var(--border);color:var(--accent);padding:0.4rem 0.8rem;font-family:'Orbitron';font-size:0.7rem;z-index:11;display:none;cursor:pointer;pointer-events:auto;-webkit-tap-highlight-color: transparent}
+.panel-toggle-btn{position:absolute;top:max(1rem, env(safe-area-inset-top));background:rgba(8,12,20,0.8);border:1px solid var(--border);color:var(--accent);padding:0.4rem 0.8rem;font-family:'Orbitron';font-size:0.7rem;z-index:11;display:none;cursor:pointer;pointer-events:auto;-webkit-tap-highlight-color: transparent}
 #btn-toggle-missions{left:1rem}
 #btn-toggle-stats{right:1rem}
-@media (hover: none) and (pointer: coarse){ .panel-toggle-btn{display:block} }
+@media (hover: none) and (pointer: coarse){ 
+    .panel-toggle-btn{display:block} 
+    #missions-panel, #stats-panel { display: none; } /* Ocultos por defecto en móvil */
+}
 
 @media screen and (orientation:portrait){ .panel-toggle-btn{display:none !important} }
 
@@ -146,10 +150,6 @@ canvas{display:block;max-width:100%;max-height:100%;width:auto !important;height
     .btn{padding:0.6rem 2rem;font-size:1rem}
     .instructions-content{padding:1.5rem;max-height:90vh;overflow-y:auto}
     .level-cards{margin:1rem 0}
-    
-    /* En móvil, los paneles empiezan escondidos por defecto para no tapar el mapa */
-    #missions-panel.hidden-mobile { transform: translateX(-110%); opacity: 0; pointer-events: none; }
-    #stats-panel.hidden-mobile { transform: translateX(110%); opacity: 0; pointer-events: none; }
 }
 </style>
 </head>
@@ -205,14 +205,14 @@ canvas{display:block;max-width:100%;max-height:100%;width:auto !important;height
     <div id="hud">
         
         <!-- Botones desplegables para móvil -->
-        <button id="btn-toggle-missions" class="panel-toggle-btn" onclick="UI.togglePanel('missions-panel')">☰ OBJ</button>
-        <button id="btn-toggle-stats" class="panel-toggle-btn" onclick="UI.togglePanel('stats-panel')">☰ STAT</button>
+        <button id="btn-toggle-missions" class="panel-toggle-btn" ontouchstart="event.stopPropagation(); UI.togglePanel('missions-panel');" onclick="event.stopPropagation(); UI.togglePanel('missions-panel');">☰ OBJ</button>
+        <button id="btn-toggle-stats" class="panel-toggle-btn" ontouchstart="event.stopPropagation(); UI.togglePanel('stats-panel');" onclick="event.stopPropagation(); UI.togglePanel('stats-panel');">☰ STAT</button>
 
-        <div id="missions-panel" class="hidden-mobile">
+        <div id="missions-panel">
             <h3 style="font-family:'Orbitron';font-size:0.75rem;letter-spacing:0.2em;color:var(--accent);margin-bottom:0.6rem">OBJETIVOS</h3>
             <div id="mission-list"></div>
         </div>
-        <div id="stats-panel" class="hidden-mobile">
+        <div id="stats-panel">
             <div class="stat-row"><span>Sector</span><span class="stat-value" id="stat-level">1</span></div>
             <div class="stat-row"><span>Ladrillos</span><span class="stat-value" id="stat-stones">1</span></div>
             <div class="stat-row"><span>Tiempo</span><span class="stat-value" id="stat-time">0.0s</span></div>
@@ -235,7 +235,6 @@ canvas{display:block;max-width:100%;max-height:100%;width:auto !important;height
     </div>
 
     <div id="mobile-controls">
-        <!-- Se añadió event.preventDefault() para arreglar el toque en iOS -->
         <button class="mobile-btn" id="btn-pause" ontouchstart="event.preventDefault(); event.stopPropagation(); UI.togglePause();" onclick="event.stopPropagation(); UI.togglePause();">PAUSA</button>
         <button class="mobile-btn" id="btn-sneak" ontouchstart="event.preventDefault(); event.stopPropagation(); UI.toggleSneak();" onclick="event.stopPropagation(); UI.toggleSneak();">SIGILO</button>
         <button class="mobile-btn" id="btn-light" ontouchstart="event.preventDefault(); event.stopPropagation(); UI.toggleLight();" onclick="event.stopPropagation(); UI.toggleLight();">LUZ</button>
@@ -283,7 +282,7 @@ let playerImg;
 
 
 // ═══════════════════════════════════════════════════
-//  CONFIGURACIÓN P5.JS
+//  CONFIGURACIÓN P5.JS Y CÁMARA
 // ═══════════════════════════════════════════════════
 const CELL = 20;
 const COLS = 54;
@@ -346,6 +345,10 @@ let moveStartX = 0, moveStartY = 0;
 let moveCurrentX = 0, moveCurrentY = 0;
 let touchAimId = null; 
 let aimTouchStart = 0;
+
+// VARIABLES DE CÁMARA
+let camX = 0, camY = 0;
+let gameMouseX = 0, gameMouseY = 0;
 
 // ============================================================
 // MAPAS
@@ -602,7 +605,11 @@ const UI = {
     },
     togglePanel(id) {
         const panel = document.getElementById(id);
-        panel.classList.toggle('hidden-mobile');
+        if (panel.style.display === 'block') {
+            panel.style.display = 'none';
+        } else {
+            panel.style.display = 'block';
+        }
     },
     initLevelSelect(){
         const c=document.getElementById('level-cards'); c.innerHTML='';
@@ -620,7 +627,7 @@ function preload() {
 }
 
 function setup() {
-  const c = createCanvas(W, H);
+  const c = createCanvas(windowWidth, windowHeight);
   c.parent('game-canvas-wrapper');
   pixelDensity(1);
   brightness = new Float32Array(COLS * ROWS);
@@ -628,6 +635,10 @@ function setup() {
   lastFullTime = new Float32Array(COLS * ROWS);
   UI.initLevelSelect();
   noLoop();
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
 }
 
 function ensureAudio() { if (!audioCtx) initSound(); audioReady = true; }
@@ -1005,11 +1016,26 @@ function draw() {
   background(5, 5, 8);
   if (!audioReady || paused) return;
 
+  // --- LÓGICA DE CÁMARA ---
+  camX = player.x;
+  camY = player.y;
+  // Limitar cámara al tamaño del mapa
+  if (width < W) camX = constrain(camX, width/2, W - width/2); else camX = W/2;
+  if (height < H) camY = constrain(camY, height/2, H - height/2); else camY = H/2;
+
+  // Convertir coordenadas de pantalla a coordenadas del mundo
+  gameMouseX = mouseX - width/2 + camX;
+  gameMouseY = mouseY - height/2 + camY;
+
   if (touchAimId !== null) {
       let t = touches.find(tc => tc.id === touchAimId);
-      if (t) player.aimAngle = atan2(t.y - player.y, t.x - player.x);
+      if (t) {
+          let gameTouchX = t.x - width/2 + camX;
+          let gameTouchY = t.y - height/2 + camY;
+          player.aimAngle = atan2(gameTouchY - player.y, gameTouchX - player.x);
+      }
   } else {
-      player.aimAngle = atan2(mouseY - player.y, mouseX - player.x);
+      player.aimAngle = atan2(gameMouseY - player.y, gameMouseX - player.x);
   }
 
   handleMovement(); updateStones(); updateEnemies(); updateCameras();
@@ -1027,12 +1053,20 @@ function draw() {
   noiseEvents = noiseEvents.filter(n => millis() - n.time < 250);
   currentTime = millis() - levelStartTime;
 
+  // --- DIBUJAR MUNDO CON CÁMARA ---
+  push();
+  translate(width/2 - camX, height/2 - camY);
+
   noStroke();
   for (let gy = 0; gy < ROWS; gy++) {
     for (let gx = 0; gx < COLS; gx++) {
       const idx = cellIndex(gx, gy); const b = brightness[idx];
       if (b <= 0.001 && !lightsOn) continue;
       const wx = gx * CELL, wy = gy * CELL;
+      
+      // Optimización: solo dibujar lo que está en pantalla
+      if (wx + CELL < camX - width/2 || wx > camX + width/2 || wy + CELL < camY - height/2 || wy > camY + height/2) continue;
+
       let isWall = false;
       for (const w of walls) { if (wx + CELL > w.x && wx < w.x + w.w && wy + CELL > w.y && wy < w.y + w.h) { isWall = true; break; } }
       if (!isWall && doorWalls && switchObj && !switchObj.activated) {
@@ -1125,6 +1159,9 @@ function draw() {
   if (dimMode) stroke(187, 102, 255, 220); else stroke(255, 255, 255, flashlightOn ? 220 : 120);
   strokeWeight(2); line(18, 0, 28, 0); pop(); noStroke(); pop();
 
+  pop(); // Fin del dibujado de mundo
+
+  // --- DIBUJAR JOYSTICK (Pantalla fija) ---
   if (touchMoveId !== null) {
       noFill(); stroke(255, 100); strokeWeight(3);
       circle(moveStartX, moveStartY, 100);
@@ -1195,7 +1232,7 @@ function checkPickup() {
 function checkBatteryPickups() {
   const lvl = LEVELS[levelIndex];
   if(!lvl.batteryPickups) return;
-  for (let i = lvl.batteryPickups.length - 1; i >= 0; i++) {
+  for (let i = lvl.batteryPickups.length - 1; i >= 0; i--) {
     const b = lvl.batteryPickups[i];
     if (dist(player.x, player.y, b.x, b.y) < player.r + b.r + 4) {
       battery = Math.min(MAX_BATTERY, battery + BATTERY_PICKUP_AMOUNT);
@@ -1260,7 +1297,7 @@ function keyPressed() {
 
 function mousePressed() {
   if (!audioReady || paused || levelCompleted) return;
-  if (mouseX >= 0 && mouseX <= W && mouseY >= 0 && mouseY <= H) throwStone(mouseX, mouseY);
+  if (gameMouseX >= 0 && gameMouseX <= W && gameMouseY >= 0 && gameMouseY <= H) throwStone(gameMouseX, gameMouseY);
 }
 
 function touchStarted() {
@@ -1268,7 +1305,7 @@ function touchStarted() {
   for (let i = 0; i < touches.length; i++) {
     let t = touches[i];
     let target = document.elementFromPoint(t.x, t.y);
-    if (target && (target.tagName === 'BUTTON' || target.classList.contains('mobile-btn'))) return true;
+    if (target && (target.tagName === 'BUTTON' || target.classList.contains('mobile-btn') || target.classList.contains('panel-toggle-btn'))) return true;
     
     if (t.x < width / 2 && touchMoveId === null) {
       touchMoveId = t.id;
@@ -1277,7 +1314,6 @@ function touchStarted() {
     } 
     else if (t.x >= width / 2 && touchAimId === null) {
       touchAimId = t.id;
-      player.aimAngle = atan2(t.y - player.y, t.x - player.x);
       aimTouchStart = millis();
     }
   }
@@ -1290,8 +1326,6 @@ function touchMoved() {
     let t = touches[i];
     if (t.id === touchMoveId) {
       moveCurrentX = t.x; moveCurrentY = t.y;
-    } else if (t.id === touchAimId) {
-      player.aimAngle = atan2(t.y - player.y, t.x - player.x);
     }
   }
   return false;
