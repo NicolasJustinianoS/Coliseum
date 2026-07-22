@@ -109,10 +109,16 @@ canvas{display:block;touch-action:none}
 #notification.show{opacity:1}
 
 /* Ajuste seguro para iPhones (notch y barra inferior) */
-#mobile-controls{position:absolute;bottom:max(1.5rem, env(safe-area-inset-bottom));right:max(1.5rem, env(safe-area-inset-right));z-index:15;display:none;flex-direction:column;gap:1rem;align-items:flex-end;pointer-events:none}
-.mobile-btn{width:65px;height:65px;border-radius:50%;background:rgba(8,12,20,0.8);border:2px solid var(--border);color:var(--accent);font-family:'Orbitron';font-size:0.7rem;font-weight:700;pointer-events:auto;cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.1;backdrop-filter:blur(4px);-webkit-tap-highlight-color: transparent}
+#mobile-controls{position:absolute;bottom:max(2rem, env(safe-area-inset-bottom));right:max(2rem, env(safe-area-inset-right));width:180px;height:140px;z-index:15;display:none;pointer-events:none}
+.mobile-btn{position:absolute;width:65px;height:65px;border-radius:50%;background:rgba(8,12,20,0.8);border:2px solid var(--border);color:var(--accent);font-family:'Orbitron';font-size:0.65rem;font-weight:700;pointer-events:auto;cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.1;backdrop-filter:blur(4px);-webkit-tap-highlight-color: transparent}
 .mobile-btn:active{background:rgba(0,255,229,0.3);transform:scale(0.95)}
-@media (hover: none) and (pointer: coarse){ #mobile-controls{display:flex} }
+
+/* Layout Triangular */
+#btn-pause{top:0;right:55px}
+#btn-sneak{bottom:0;left:10px}
+#btn-stone{bottom:0;right:10px}
+
+@media (hover: none) and (pointer: coarse){ #mobile-controls{display:block} }
 
 .overlay{position:absolute;inset:0;background:rgba(5,5,8,0.85);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:20;backdrop-filter:blur(4px)}
 .overlay.active{display:flex}
@@ -130,8 +136,8 @@ canvas{display:block;touch-action:none}
 @keyframes rotateAnim{0%,100%{transform:rotate(0deg)}50%{transform:rotate(90deg)}}
 @media screen and (orientation:portrait){ #rotate-overlay{display:flex} }
 
-/* BOTONES DESPLEGABLES MÓVILES */
-.panel-toggle-btn{position:absolute;top:max(1rem, env(safe-area-inset-top));background:rgba(8,12,20,0.8);border:1px solid var(--border);color:var(--accent);padding:0.4rem 0.8rem;font-family:'Orbitron';font-size:0.7rem;z-index:11;display:none;cursor:pointer;pointer-events:auto;-webkit-tap-highlight-color: transparent}
+/* BOTONES DESPLEGABLES MÓVILES (Bajados 3rem para evitar el Notch) */
+.panel-toggle-btn{position:absolute;top:max(3.5rem, calc(env(safe-area-inset-top) + 2rem));background:rgba(8,12,20,0.8);border:1px solid var(--border);color:var(--accent);padding:0.4rem 0.8rem;font-family:'Orbitron';font-size:0.7rem;z-index:11;display:none;cursor:pointer;pointer-events:auto;-webkit-tap-highlight-color: transparent}
 #btn-toggle-missions{left:1rem}
 #btn-toggle-stats{right:1rem}
 @media (hover: none) and (pointer: coarse){ 
@@ -196,7 +202,7 @@ canvas{display:block;touch-action:none}
         <div class="instr-item"><span class="instr-key">Parado 1s</span><span class="instr-desc">Mantenete quieto sobre un panel o interruptor naranja para activarlo y abrir las rejas correspondientes.</span></div>
         <div class="instr-item"><span class="instr-key">R</span><span class="instr-desc">Reiniciar la sala actual. Útil si te encuentras atrapado o quieres intentar una estrategia distinta.</span></div>
         <div class="instr-item"><span class="instr-key">ESC</span><span class="instr-desc">Pausar la partida. Accede a las opciones de continuar, reiniciar o salir al menú principal.</span></div>
-        <div class="instr-item"><span class="instr-key">MÓVIL</span><span class="instr-desc">Mitad Izquierda: Joystick para moverte (Empuja al máximo para correr). Mitad Derecha: Toca para apuntar, tap rápido para lanzar ladrillo. Botones en pantalla para luz y sigilo.</span></div>
+        <div class="instr-item"><span class="instr-key">MÓVIL</span><span class="instr-desc">Joystick Izq: Mover. Joystick Der: Apuntar luz (Tap rápido para encender/apagar). Botones: Pausa, Sigilo y Lanzar Piedra.</span></div>
     </div>
 </div>
 
@@ -237,7 +243,7 @@ canvas{display:block;touch-action:none}
     <div id="mobile-controls">
         <button class="mobile-btn" id="btn-pause" ontouchstart="event.preventDefault(); event.stopPropagation(); UI.togglePause();" onclick="event.stopPropagation(); UI.togglePause();">PAUSA</button>
         <button class="mobile-btn" id="btn-sneak" ontouchstart="event.preventDefault(); event.stopPropagation(); UI.toggleSneak();" onclick="event.stopPropagation(); UI.toggleSneak();">SIGILO</button>
-        <button class="mobile-btn" id="btn-light" ontouchstart="event.preventDefault(); event.stopPropagation(); UI.toggleLight();" onclick="event.stopPropagation(); UI.toggleLight();">LUZ</button>
+        <button class="mobile-btn" id="btn-stone" ontouchstart="event.preventDefault(); event.stopPropagation(); UI.throwStoneButton();" onclick="event.stopPropagation(); UI.throwStoneButton();">PIEDRA</button>
     </div>
     
     <div id="pause-overlay" class="overlay">
@@ -340,11 +346,15 @@ let bestTime = 0;
 let lastTimes = []; 
 let levelCompleted = false; 
 
+// Controles táctiles
 let touchMoveId = null; 
 let moveStartX = 0, moveStartY = 0;
 let moveCurrentX = 0, moveCurrentY = 0;
+
 let touchAimId = null; 
 let aimTouchStart = 0;
+let aimStartX = 0, aimStartY = 0;
+let aimCurrentX = 0, aimCurrentY = 0;
 
 // VARIABLES DE CÁMARA
 let camX = 0, camY = 0;
@@ -603,13 +613,15 @@ const UI = {
         sneakMode = !sneakMode;
         showMsg(sneakMode ? "SIGILO ACTIVADO" : "SIGILO DESACTIVADO", "var(--success)");
     },
+    throwStoneButton() {
+        if (paused || levelCompleted) return;
+        let throwX = player.x + cos(player.aimAngle) * 100;
+        let throwY = player.y + sin(player.aimAngle) * 100;
+        throwStone(throwX, throwY);
+    },
     togglePanel(id) {
         const panel = document.getElementById(id);
-        if (panel.style.display === 'block') {
-            panel.style.display = 'none';
-        } else {
-            panel.style.display = 'block';
-        }
+        panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
     },
     initLevelSelect(){
         const c=document.getElementById('level-cards'); c.innerHTML='';
@@ -1019,20 +1031,18 @@ function draw() {
   // --- LÓGICA DE CÁMARA ---
   camX = player.x;
   camY = player.y;
-  // Limitar cámara al tamaño del mapa
   if (width < W) camX = constrain(camX, width/2, W - width/2); else camX = W/2;
   if (height < H) camY = constrain(camY, height/2, H - height/2); else camY = H/2;
 
-  // Convertir coordenadas de pantalla a coordenadas del mundo
   gameMouseX = mouseX - width/2 + camX;
   gameMouseY = mouseY - height/2 + camY;
 
+  // LÓGICA JOYSTICK DERECHO (APUNTAR)
   if (touchAimId !== null) {
-      let t = touches.find(tc => tc.id === touchAimId);
-      if (t) {
-          let gameTouchX = t.x - width/2 + camX;
-          let gameTouchY = t.y - height/2 + camY;
-          player.aimAngle = atan2(gameTouchY - player.y, gameTouchX - player.x);
+      let dxAim = aimCurrentX - aimStartX;
+      let dyAim = aimCurrentY - aimStartY;
+      if (Math.sqrt(dxAim*dxAim + dyAim*dyAim) > 5) { // Evita que apunte a 0 si no mueve el dedo
+          player.aimAngle = atan2(dyAim, dxAim);
       }
   } else {
       player.aimAngle = atan2(gameMouseY - player.y, gameMouseX - player.x);
@@ -1161,12 +1171,19 @@ function draw() {
 
   pop(); // Fin del dibujado de mundo
 
-  // --- DIBUJAR JOYSTICK (Pantalla fija) ---
+  // --- DIBUJAR JOYSTICKS (Pantalla fija) ---
   if (touchMoveId !== null) {
-      noFill(); stroke(255, 100); strokeWeight(3);
+      noFill(); stroke(0, 255, 229, 100); strokeWeight(3);
       circle(moveStartX, moveStartY, 100);
       fill(0, 255, 229, 150); noStroke();
       circle(moveCurrentX, moveCurrentY, 40);
+  }
+  
+  if (touchAimId !== null) {
+      noFill(); stroke(255, 255, 200, 100); strokeWeight(3);
+      circle(aimStartX, aimStartY, 100);
+      fill(255, 255, 200, 150); noStroke();
+      circle(aimCurrentX, aimCurrentY, 40);
   }
 
   checkPickup(); checkBatteryPickups(); updateSwitchHold();
@@ -1314,6 +1331,8 @@ function touchStarted() {
     } 
     else if (t.x >= width / 2 && touchAimId === null) {
       touchAimId = t.id;
+      aimStartX = t.x; aimStartY = t.y;
+      aimCurrentX = t.x; aimCurrentY = t.y;
       aimTouchStart = millis();
     }
   }
@@ -1326,6 +1345,8 @@ function touchMoved() {
     let t = touches[i];
     if (t.id === touchMoveId) {
       moveCurrentX = t.x; moveCurrentY = t.y;
+    } else if (t.id === touchAimId) {
+      aimCurrentX = t.x; aimCurrentY = t.y;
     }
   }
   return false;
@@ -1335,12 +1356,13 @@ function touchEnded() {
   if (!audioReady || paused || levelCompleted) return true;
   let moveExists = touches.some(t => t.id === touchMoveId);
   let aimExists = touches.some(t => t.id === touchAimId);
+  
   if (!moveExists) { touchMoveId = null; }
+  
   if (!aimExists) {
+    // Si fue un tap rápido (menos de 250ms), enciende/apaga la luz
     if (millis() - aimTouchStart < 250) {
-      let throwX = player.x + cos(player.aimAngle) * 100;
-      let throwY = player.y + sin(player.aimAngle) * 100;
-      throwStone(throwX, throwY);
+      UI.toggleLight();
     }
     touchAimId = null;
   }
