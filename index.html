@@ -10,8 +10,6 @@
 
 <!-- ================================================================== 
      ZONA P5.JS LOCAL (PARA EL FINAL)
-     Para usarlo offline: pega todo el código de p5.min.js dentro de este script, 
-     borra la etiqueta <script src=...> de abajo, y descomenta esta etiqueta.
 =================================================================== -->
 <!-- 
 <script>
@@ -19,7 +17,7 @@
 </script> 
 -->
 
-<!-- Por ahora usamos el CDN para que funcione en internet -->
+<!-- Por ahora usamos el CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
 
 <style>
@@ -30,8 +28,8 @@
 --panel:rgba(8,12,20,0.92);--border:rgba(0,255,229,0.25);
 }
 html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:'Rajdhani',sans-serif;color:var(--fg);user-select:none;cursor:crosshair}
-#app{width:100vw;height:100vh;position:relative}
-.screen{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
+#app{width:100vw;height:100vh;position:relative;overflow:hidden}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem;overflow-y:auto}
 .screen.active{display:flex;animation:fadeIn .4s ease}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 
@@ -57,7 +55,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
 }
 .title-block .subtitle{font-size:1.2rem;letter-spacing:0.3em;color:rgba(224,224,224,0.6);text-transform:uppercase}
 .menu-buttons{display:flex;flex-direction:column;gap:1rem;position:relative;z-index:1;min-width:280px}
-.btn{font-family:'Rajdhani',sans-serif;font-size:1.1rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;padding:0.9rem 2.5rem;background:transparent;color:var(--fg);border:1px solid var(--border);cursor:pointer;transition:all 0.25s ease;pointer-events:auto}
+.btn{font-family:'Rajdhani',sans-serif;font-size:1.1rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;padding:0.9rem 2.5rem;background:transparent;color:var(--fg);border:1px solid var(--border);cursor:pointer;transition:all 0.25s ease;pointer-events:auto;-webkit-tap-highlight-color: transparent}
 .btn:hover{background:rgba(0,255,229,0.08);color:var(--accent);border-color:var(--accent)}
 .btn-primary{background:rgba(0,255,229,0.1);border-color:var(--accent);color:var(--accent)}
 .btn-primary:hover{background:rgba(0,255,229,0.2);box-shadow:0 0 20px rgba(0,255,229,0.3)}
@@ -86,7 +84,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
 .instr-key{font-family:'Orbitron';background:rgba(0,255,229,0.1);border:1px solid var(--border);padding:0.3rem 0.8rem;font-size:0.85rem;color:var(--accent);min-width:140px;text-align:center;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .instr-desc{font-size:1rem;line-height:1.5;text-align:left}
 
-#game-screen{padding:0;justify-content:center;align-items:center;background:var(--bg)}
+#game-screen{padding:0;justify-content:center;align-items:center;background:var(--bg);overflow:hidden}
 #game-canvas-wrapper{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
 canvas{display:block;max-width:100%;max-height:100%;touch-action:none}
 #hud{position:absolute;inset:0;pointer-events:none;z-index:10}
@@ -109,7 +107,7 @@ canvas{display:block;max-width:100%;max-height:100%;touch-action:none}
 #notification.show{opacity:1}
 
 #mobile-controls{position:absolute;bottom:1.5rem;right:1.5rem;z-index:15;display:none;flex-direction:column;gap:1rem;align-items:flex-end;pointer-events:none}
-.mobile-btn{width:60px;height:60px;border-radius:50%;background:rgba(8,12,20,0.8);border:2px solid var(--border);color:var(--accent);font-family:'Orbitron';font-size:0.7rem;font-weight:700;pointer-events:auto;cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.1;backdrop-filter:blur(4px)}
+.mobile-btn{width:60px;height:60px;border-radius:50%;background:rgba(8,12,20,0.8);border:2px solid var(--border);color:var(--accent);font-family:'Orbitron';font-size:0.7rem;font-weight:700;pointer-events:auto;cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.1;backdrop-filter:blur(4px);-webkit-tap-highlight-color: transparent}
 .mobile-btn:active{background:rgba(0,255,229,0.3);transform:scale(0.95)}
 @media (hover: none) and (pointer: coarse){ #mobile-controls{display:flex} }
 
@@ -120,9 +118,36 @@ canvas{display:block;max-width:100%;max-height:100%;touch-action:none}
 #level-complete-overlay h2{color:var(--success)}
 #complete-time{font-family:'Orbitron';font-size:1.2rem;color:var(--fg);margin-bottom:2rem;text-align:center;line-height:1.6}
 .overlay-buttons{display:flex;flex-direction:column;gap:1rem;min-width:240px}
+
+/* OVERLAY DE ROTACIÓN PARA MÓVIL */
+#rotate-overlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem}
+#rotate-overlay .rotate-icon{font-size:4rem;margin-bottom:2rem;animation:rotateAnim 2s infinite ease-in-out}
+#rotate-overlay h2{font-family:'Orbitron';color:var(--accent);font-size:1.5rem;margin-bottom:1rem;letter-spacing:0.2em}
+#rotate-overlay p{color:var(--fg);font-size:1rem}
+@keyframes rotateAnim{0%,100%{transform:rotate(0deg)}50%{transform:rotate(90deg)}}
+@media screen and (orientation:portrait){ #rotate-overlay{display:flex} }
+
+/* RESPONSIVE PARA PANTALLAS HORIENTALES DE MÓVIL */
+@media screen and (orientation:landscape) and (max-height: 500px) {
+    .title-block{margin-bottom:1.5rem}
+    .title-block h1{font-size:3rem;margin-bottom:0}
+    .title-block .subtitle{font-size:0.8rem;letter-spacing:0.2em}
+    .menu-buttons{gap:0.5rem;min-width:240px}
+    .btn{padding:0.6rem 2rem;font-size:1rem}
+    .instructions-content{padding:1.5rem;max-height:90vh;overflow-y:auto}
+    .level-cards{margin:1rem 0}
+}
 </style>
 </head>
 <body>
+
+<!-- MENSAJE DE ROTAR TELÉFONO -->
+<div id="rotate-overlay">
+    <div class="rotate-icon">📱</div>
+    <h2>GIRA TU TELÉFONO</h2>
+    <p>Coliseum se juega en modo horizontal</p>
+</div>
+
 <div id="app">
 
 <div id="menu-screen" class="screen active">
@@ -157,7 +182,7 @@ canvas{display:block;max-width:100%;max-height:100%;touch-action:none}
         <div class="instr-item"><span class="instr-key">Parado 1s</span><span class="instr-desc">Mantenete quieto sobre un panel o interruptor naranja para activarlo y abrir las rejas correspondientes.</span></div>
         <div class="instr-item"><span class="instr-key">R</span><span class="instr-desc">Reiniciar la sala actual. Útil si te encuentras atrapado o quieres intentar una estrategia distinta.</span></div>
         <div class="instr-item"><span class="instr-key">ESC</span><span class="instr-desc">Pausar la partida. Accede a las opciones de continuar, reiniciar o salir al menú principal.</span></div>
-        <div class="instr-item"><span class="instr-key">MÓVIL</span><span class="instr-desc">Mitad Izquierda: Joystick para moverte (Empuja al máximo para correr). Mitad Derecha: Toca para apuntar, doble tap para lanzar ladrillo. Botones en pantalla para luz y sigilo.</span></div>
+        <div class="instr-item"><span class="instr-key">MÓVIL</span><span class="instr-desc">Mitad Izquierda: Joystick para moverte (Empuja al máximo para correr). Mitad Derecha: Toca para apuntar, tap rápido para lanzar ladrillo. Botones en pantalla para luz y sigilo.</span></div>
     </div>
 </div>
 
@@ -191,9 +216,9 @@ canvas{display:block;max-width:100%;max-height:100%;touch-action:none}
     </div>
 
     <div id="mobile-controls">
-        <button class="mobile-btn" id="btn-pause" onclick="UI.togglePause();">PAUSA</button>
-        <button class="mobile-btn" id="btn-sneak" onclick="UI.toggleSneak();">SIGILO</button>
-        <button class="mobile-btn" id="btn-light" onclick="UI.toggleLight();">LUZ</button>
+        <button class="mobile-btn" id="btn-pause" onclick="UI.togglePause(); event.preventDefault();">PAUSA</button>
+        <button class="mobile-btn" id="btn-sneak" onclick="UI.toggleSneak(); event.preventDefault();">SIGILO</button>
+        <button class="mobile-btn" id="btn-light" onclick="UI.toggleLight(); event.preventDefault();">LUZ</button>
     </div>
     
     <div id="pause-overlay" class="overlay">
@@ -222,7 +247,6 @@ canvas{display:block;max-width:100%;max-height:100%;touch-action:none}
 <script>
 // ==================================================================
 //  ZONA DE IMÁGENES BASE64 (PARA EL FINAL)
-//  Reemplaza los _1px_img por tus imágenes reales cuando las tengas.
 // ==================================================================
 const _1px_img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
 
@@ -1215,12 +1239,17 @@ function mousePressed() {
   if (mouseX >= 0 && mouseX <= W && mouseY >= 0 && mouseY <= H) throwStone(mouseX, mouseY);
 }
 
+// EVENTOS TÁCTILES (Corregidos para iOS)
 function touchStarted() {
-  if (!audioReady || paused || levelCompleted) return false;
+  // Si estamos en el menú o pausa, dejamos que el navegador haga clic en los botones nativos
+  if (!audioReady || paused || levelCompleted) return true;
+  
   for (let i = 0; i < touches.length; i++) {
     let t = touches[i];
     let target = document.elementFromPoint(t.x, t.y);
-    if (target && target.classList.contains('mobile-btn')) continue;
+    // Si el toque fue en un botón del DOM, no procesamos lógica de juego
+    if (target && (target.tagName === 'BUTTON' || target.classList.contains('mobile-btn'))) return true;
+    
     if (t.x < width / 2 && touchMoveId === null) {
       touchMoveId = t.id;
       moveStartX = t.x; moveStartY = t.y;
@@ -1236,7 +1265,7 @@ function touchStarted() {
 }
 
 function touchMoved() {
-  if (!audioReady || paused || levelCompleted) return false;
+  if (!audioReady || paused || levelCompleted) return true;
   for (let i = 0; i < touches.length; i++) {
     let t = touches[i];
     if (t.id === touchMoveId) {
@@ -1249,7 +1278,7 @@ function touchMoved() {
 }
 
 function touchEnded() {
-  if (!audioReady || paused || levelCompleted) return false;
+  if (!audioReady || paused || levelCompleted) return true;
   let moveExists = touches.some(t => t.id === touchMoveId);
   let aimExists = touches.some(t => t.id === touchAimId);
   if (!moveExists) { touchMoveId = null; }
